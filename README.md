@@ -22,9 +22,21 @@ Please refer to the [official documentation](https://docs.sysdig.com/en/docs/adm
 
 ### Install the package
 
-```bash
+#### Via NPM
+
+TBA
+
+<!-- ```bash
 # From your Backstage root directory
 yarn --cwd packages/app add @sysdig/backstage-plugin-sysdig
+``` -->
+
+#### Via GitHub
+
+```bash
+# From your Backstage root directory
+git clone https://github.com/sysdiglabs/backstage-plugin-sysdig -o plugins/sysdig
+yarn install
 ```
 
 ### Add the route
