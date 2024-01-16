@@ -128,3 +128,12 @@ spec:
     - component:default/sock-shop-carts-db
 
 ```
+
+
+## FAQs
+
+### I already have my Backstage components tied to Kubernetes (or other) annotations. Can I use those?
+
+In most cases, **no**. It cannot be guaranteed that values for other plugins, such as the Kubernetes one, will match those in Sysdig. For example, when you install the Sysdig Agent, you can set data to whatever you want (such as the cluster name), so it may differ from what other plugins have.
+
+If you can guarantee that values for certain annotations will always match across plugins, you can edit the [source file](./src/lib/annotations.ts) and set those to the desired annotations.
