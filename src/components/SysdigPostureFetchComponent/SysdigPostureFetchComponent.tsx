@@ -54,7 +54,8 @@ import {
   getDetails,
   getGauge,
   getScope,
-  getResourceName
+  getResourceName,
+  getTitleWithBacklink
 } from '../../lib'
 
 
@@ -111,6 +112,7 @@ type PostureScan = {
 
 type DenseTableProps = {
   postureScans: PostureScan[];
+  title: React.JSX.Element;
 };
 
 // Example image response from Sysdig scanning API
@@ -169,7 +171,7 @@ type DenseTableProps = {
   ...
 */
 
-export const DenseTable = ({ postureScans }: DenseTableProps) => {
+export const DenseTable = ({ postureScans, title }: DenseTableProps) => {
   const columns: TableColumn[] = [
     { title: 'Name', field: 'name', width: "10%" },
     { title: 'Scope', field: 'scope', width: "10%"  },
@@ -193,7 +195,7 @@ export const DenseTable = ({ postureScans }: DenseTableProps) => {
 
   return (
     <Table
-      title="Posture Overview"
+      title={title}
       options={{ search: true, paging: false }}
       // sortby
 
@@ -206,168 +208,170 @@ export const DenseTable = ({ postureScans }: DenseTableProps) => {
 export const SysdigPostureFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/inventory';
 
-  const { value, loading, error } = useAsync(async (): Promise<PostureScan[]> => {
-    const timeNow = Date.now() * 1000;
-    const oneWeekAgo = timeNow - 24 * 60 * 60 * 1000 * 1000;
-    const annotations = entity.metadata.annotations;
+  const annotations = entity.metadata.annotations;
 
-    let uri = backendUrl + '/api/proxy/sysdig/api/cspm/v1/inventory/resources';
-    var name;
+  let uri = backendUrl + '/api/proxy/sysdig/api/cspm/v1/inventory/resources';
+  let filter = '?filter=';
+  var name;
 
-    if (annotations) {
+  if (annotations) {
 
-      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-        uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-      } else {
-
-        var filters = []
-
-        if (SYSDIG_EXTERNALDNS_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_EXTERNALDNS_ANNOTATION]
-          filters.push('externalDNS="' + name + '"');
-        }
-        
-        if (SYSDIG_DISTRIBUTION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_DISTRIBUTION_ANNOTATION]
-          filters.push('distribution="' + name + '"');
-        }
-        
-        if (SYSDIG_LABELS_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_LABELS_ANNOTATION]
-          filters.push('labels="' + name + '"');
-        }
-        
-        if (SYSDIG_RESOURCE_NAME_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_RESOURCE_NAME_ANNOTATION]
-          filters.push('name="' + name + '"');
-        }
-        
-        if (SYSDIG_RESOURCE_ORIGIN_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_RESOURCE_ORIGIN_ANNOTATION]
-          filters.push('resourceOrigin="' + name + '"');
-        }
-        
-        if (SYSDIG_RESOURCE_TYPE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_RESOURCE_TYPE_ANNOTATION]
-          filters.push('type="' + name + '"');
-        }
-        
-        if (SYSDIG_NODE_TYPE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_NODE_TYPE_ANNOTATION]
-          filters.push('nodeType="' + name + '"');
-        }
-        
-        if (SYSDIG_OS_NAME_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_OS_NAME_ANNOTATION]
-          filters.push('osName="' + name + '"');
-        }
-        
-        if (SYSDIG_OS_IMAGE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_OS_IMAGE_ANNOTATION]
-          filters.push('osImage="' + name + '"');
-        }
-        
-        if (SYSDIG_PLATFORM_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_PLATFORM_ANNOTATION]
-          filters.push('platform="' + name + '"');
-        }
-        
-        if (SYSDIG_ACCOUNT_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_ACCOUNT_ANNOTATION]
-          filters.push('account="' + name + '"');
-        }
-        
-        if (SYSDIG_ORGANIZATION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_ORGANIZATION_ANNOTATION]
-          filters.push('organization="' + name + '"');
-        }
-        
-        if (SYSDIG_PROJECT_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_PROJECT_ANNOTATION]
-          filters.push('project="' + name + '"');
-        }
-        
-        if (SYSDIG_REGION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_REGION_ANNOTATION]
-          filters.push('region="' + name + '"');
-        }
-        
-        if (SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION]
-          filters.push('subscription="' + name + '"');
-        }
-        
-        if (SYSDIG_VERSION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_VERSION_ANNOTATION]
-          filters.push('version="' + name + '"');
-        }
-        
-        if (SYSDIG_ZONE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_ZONE_ANNOTATION]
-          filters.push('zone="' + name + '"');
-        }
-        
-        if (SYSDIG_CATEGORY_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_CATEGORY_ANNOTATION]
-          filters.push('category="' + name + '"');
-        }
-        
-        if (SYSDIG_INTEGRATION_NAME_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_INTEGRATION_NAME_ANNOTATION]
-          filters.push('integrationName="' + name + '"');
-        }
-        
-        if (SYSDIG_LOCATION_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_LOCATION_ANNOTATION]
-          filters.push('location="' + name + '"');
-        }
-        
-        if (SYSDIG_REPOSITORY_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_REPOSITORY_ANNOTATION]
-          filters.push('repository="' + name + '"');
-        }
-        
-        if (SYSDIG_SOURCE_TYPE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_SOURCE_TYPE_ANNOTATION]
-          filters.push('sourceType="' + name + '"');
-        }      
-
-        if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION]
-          filters.push('cluster="' + name + '"');
-        }
-        
-        if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_NAMESPACE_ANNOTATION]
-          filters.push('namespace="' + name + '"');
-        }
-        
-        if (filters.length == 0) {
-          return []
-        }
-        
-        uri += '?filter=' + filters.join(' and '); 
-      }
+    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
-      return [];
+
+      var filters = []
+
+      if (SYSDIG_EXTERNALDNS_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_EXTERNALDNS_ANNOTATION]
+        filters.push('externalDNS="' + name + '"');
+      }
+      
+      if (SYSDIG_DISTRIBUTION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_DISTRIBUTION_ANNOTATION]
+        filters.push('distribution="' + name + '"');
+      }
+      
+      if (SYSDIG_LABELS_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_LABELS_ANNOTATION]
+        filters.push('labels="' + name + '"');
+      }
+      
+      if (SYSDIG_RESOURCE_NAME_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_RESOURCE_NAME_ANNOTATION]
+        filters.push('name="' + name + '"');
+      }
+      
+      if (SYSDIG_RESOURCE_ORIGIN_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_RESOURCE_ORIGIN_ANNOTATION]
+        filters.push('resourceOrigin="' + name + '"');
+      }
+      
+      if (SYSDIG_RESOURCE_TYPE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_RESOURCE_TYPE_ANNOTATION]
+        filters.push('type="' + name + '"');
+      }
+      
+      if (SYSDIG_NODE_TYPE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_NODE_TYPE_ANNOTATION]
+        filters.push('nodeType="' + name + '"');
+      }
+      
+      if (SYSDIG_OS_NAME_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_OS_NAME_ANNOTATION]
+        filters.push('osName="' + name + '"');
+      }
+      
+      if (SYSDIG_OS_IMAGE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_OS_IMAGE_ANNOTATION]
+        filters.push('osImage="' + name + '"');
+      }
+      
+      if (SYSDIG_PLATFORM_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_PLATFORM_ANNOTATION]
+        filters.push('platform="' + name + '"');
+      }
+      
+      if (SYSDIG_ACCOUNT_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_ACCOUNT_ANNOTATION]
+        filters.push('account="' + name + '"');
+      }
+      
+      if (SYSDIG_ORGANIZATION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_ORGANIZATION_ANNOTATION]
+        filters.push('organization="' + name + '"');
+      }
+      
+      if (SYSDIG_PROJECT_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_PROJECT_ANNOTATION]
+        filters.push('project="' + name + '"');
+      }
+      
+      if (SYSDIG_REGION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REGION_ANNOTATION]
+        filters.push('region="' + name + '"');
+      }
+      
+      if (SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION]
+        filters.push('subscription="' + name + '"');
+      }
+      
+      if (SYSDIG_VERSION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_VERSION_ANNOTATION]
+        filters.push('version="' + name + '"');
+      }
+      
+      if (SYSDIG_ZONE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_ZONE_ANNOTATION]
+        filters.push('zone="' + name + '"');
+      }
+      
+      if (SYSDIG_CATEGORY_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_CATEGORY_ANNOTATION]
+        filters.push('category="' + name + '"');
+      }
+      
+      if (SYSDIG_INTEGRATION_NAME_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_INTEGRATION_NAME_ANNOTATION]
+        filters.push('integrationName="' + name + '"');
+      }
+      
+      if (SYSDIG_LOCATION_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_LOCATION_ANNOTATION]
+        filters.push('location="' + name + '"');
+      }
+      
+      if (SYSDIG_REPOSITORY_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REPOSITORY_ANNOTATION]
+        filters.push('repository="' + name + '"');
+      }
+      
+      if (SYSDIG_SOURCE_TYPE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_SOURCE_TYPE_ANNOTATION]
+        filters.push('sourceType="' + name + '"');
+      }      
+
+      if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION]
+        filters.push('cluster="' + name + '"');
+      }
+      
+      if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_NAMESPACE_ANNOTATION]
+        filters.push('namespace="' + name + '"');
+      }
+      
+      if (filters.length == 0) {
+        return []
+      }
+
+      filter += filters.join(' and '); 
+      uri += filter;
+      backlink += filter;
     }
 
-    const requestOptions = {
-      method: 'GET',
-    };
+    const { value, loading, error } = useAsync(async (): Promise<PostureScan[]> => {
+      const requestOptions = {
+        method: 'GET',
+      };
 
+      const response = await fetch(uri, requestOptions);
+      const data = await response.json();
+      return data.data;
+    }, []);
+  
+    if (loading) {
+      return <Progress />;
+    } else if (error) {
+      return <Alert severity="error">{error.message}</Alert>;
+    }
 
-    const response = await fetch(uri, requestOptions);
-    const data = await response.json();
-    return data.data;
-  }, []);
+    return <DenseTable postureScans={value || []} title={getTitleWithBacklink("Posture Overview", backlink) || []} />;
 
-  if (loading) {
-    return <Progress />;
-  } else if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+  } else {
+    return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
-
-  return <DenseTable postureScans={value || []} />;
 };

@@ -5,6 +5,7 @@ import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Typography from '@material-ui/core/Typography';
 import { Gauge } from '@backstage/core-components';
+import { OpenInNew } from '@material-ui/icons';
 
 const interleave = (arr: any, thing: any) => [].concat(...arr.map((n: any) => [n, thing])).slice(0, -1)
 
@@ -83,7 +84,7 @@ function getPassed(passed: any) {
 }
 
 function getGauge(passPercentage: number) {
-  return <div style={{width:200}}><Gauge
+  return <div style={{width:250}}><Gauge
         value={passPercentage/100}
       /></div>;
 }
@@ -107,6 +108,18 @@ function getDate(timestamp: number): string {
   return ymd + " " + time;
 }
 
+function getTitleWithBacklink(title: string, backlink: string) {
+  return <div style={{display:"flex"}}>
+    <a>{title}</a>
+    <div style={{marginLeft:"10px;", "padding":"0 0 10px 5px"}}>
+    <Tooltip title="Open in Sysdig Secure">
+      <IconButton aria-label='Open in new tab' size='small' target="_blank" href={backlink}>
+        <OpenInNew fontSize="inherit" />
+      </IconButton>
+    </Tooltip>
+    </div>
+  </div>
+}
 
 // convert url to an a href
 const getUrl = (url: string) => {
@@ -133,5 +146,6 @@ export {
   getFailed,
   getPassed,
   getResourceName,
+  getTitleWithBacklink,
   urlEncode
 };

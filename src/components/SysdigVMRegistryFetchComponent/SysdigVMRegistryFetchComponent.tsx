@@ -26,7 +26,8 @@ import {
   SYSDIG_CUSTOM_FILTER_ANNOTATION,
 
   // methods
-  getChips
+  getChips,
+  getTitleWithBacklink
 } from '../../lib'
 
 
@@ -45,6 +46,7 @@ type RegistryScan =   {
 
 type DenseTableProps = {
   registryScans: RegistryScan[];
+  title: React.JSX.Element;
 };
 
 // Example image response from Sysdig scanning API
@@ -66,7 +68,7 @@ type DenseTableProps = {
   ...
 */
 
-export const DenseTable = ({ registryScans }: DenseTableProps) => {
+export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
   const columns: TableColumn[] = [
     { title: 'Image ID', field: 'imageId', width: "20%" },
     { title: 'Asset Name', field: 'asset', width: "35%"  },
@@ -84,7 +86,7 @@ export const DenseTable = ({ registryScans }: DenseTableProps) => {
 
   return (
     <Table
-      title="Registry Scan Overview"
+      title={title}
       options={{ search: true, paging: false }}
       // sortby
 
@@ -97,58 +99,59 @@ export const DenseTable = ({ registryScans }: DenseTableProps) => {
 export const SysdigVMRegistryFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/vulnerabilities/registry/';
 
-  const { value, loading, error } = useAsync(async (): Promise<RegistryScan[]> => {
-    const timeNow = Date.now() * 1000;
-    const oneWeekAgo = timeNow - 24 * 60 * 60 * 1000 * 1000;
-    const annotations = entity.metadata.annotations;
+  let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/registry-results';
+  let filter = '?filter=';
+  var name;
 
-    let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/registry-results';
-    var name;
-
-    if (annotations) {
-      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-        uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-      } else {
-
-        var filters = []
-        
-        if (SYSDIG_REGISTRY_NAME_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_REGISTRY_NAME_ANNOTATION]
-          filters.push('registry.name="' + name + '"');
-        }
-        
-        if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION]
-          filters.push('registry.vendor="' + name + '"');
-        }
-        
-        if (filters.length == 0) {
-          return []
-        }
-        
-        uri += '?filter=' + filters.join(' and '); 
-      }
+  const annotations = entity.metadata.annotations;
+  if (annotations) {
+    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
-      return [];
+
+      var filters = []
+      
+      if (SYSDIG_REGISTRY_NAME_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REGISTRY_NAME_ANNOTATION]
+        filters.push('registry.name="' + name + '"');
+      }
+      
+      if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION]
+        filters.push('registry.vendor="' + name + '"');
+      }
+      
+      if (filters.length == 0) {
+        return []
+      }
+      
+      filter += filters.join(' and '); 
+      uri += filter;
+      backlink += filter;
     }
 
-    const requestOptions = {
-      method: 'GET',
-    };
-
-
-    const response = await fetch(uri, requestOptions);
-    const data = await response.json();
-    console.log(data.data)
-    return data.data;
-  }, []);
-
-  if (loading) {
-    return <Progress />;
-  } else if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+    const { value, loading, error } = useAsync(async (): Promise<RegistryScan[]> => {
+      const requestOptions = {
+        method: 'GET',
+      };
+  
+  
+      const response = await fetch(uri, requestOptions);
+      const data = await response.json();
+      console.log(data.data)
+      return data.data;
+    }, []);
+  
+    if (loading) {
+      return <Progress />;
+    } else if (error) {
+      return <Alert severity="error">{error.message}</Alert>;
+    }
+    
+    return <DenseTable registryScans={value || []} title={getTitleWithBacklink("Registry Scan Overview", backlink) || []} />;
+  } else {
+    return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
-
-  return <DenseTable registryScans={value || []} />;
 };

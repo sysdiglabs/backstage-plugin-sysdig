@@ -72,7 +72,7 @@ Edit `app-config.yaml` and add to the API endpoints the following details:
 proxy:
   endpoints:
 +     '/sysdig':
-+       target: 'https://secure.sysdig.com/'
++       target: ${SYSDIG_SECURE_ENDPOINT}
 +       changeOrigin: true
 +       allowedMethods: ['GET']
 +       headers:
@@ -80,11 +80,15 @@ proxy:
 +         "Content-Type": "application/json"
 +         "Accept": "application/json"
 +         "X-Sysdig-Product": "SDS"
+
+...
+
++ sysdig:
++   endpoint: ${SYSDIG_SECURE_ENDPOINT}
 ```
 
-Replace the value for `target` with your Sysdig Secure Endpoint.
-
-You can replace `${SYSDIG_SECURE_TOKEN}` with your Sysdig Secure API Token, or you can set it to the `SYSDIG_SECURE_TOKEN` environment variable when deploying your Backstage instance.
+- Set the environment variable `SYSDIG_SECURE_ENDPOINT` to your Sysdig Secure Endpoint.
+- Likewise, set `SYSDIG_SECURE_TOKEN` to your Sysdig Secure API Token.
 
 
 ## How to annotate services
