@@ -35,7 +35,7 @@ yarn --cwd packages/app add @sysdig/backstage-plugin-sysdig
 
 ```bash
 # From your Backstage root directory
-git clone https://github.com/sysdiglabs/backstage-plugin-sysdig -o plugins/sysdig
+git clone https://github.com/sysdiglabs/backstage-plugin-sysdig plugins/sysdig
 yarn install
 ```
 
