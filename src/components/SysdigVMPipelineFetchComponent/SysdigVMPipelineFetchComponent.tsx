@@ -17,7 +17,6 @@ import React from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
 import Alert from '@material-ui/lab/Alert';
-import Chip from '@material-ui/core/Chip';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import {
@@ -27,6 +26,7 @@ import {
 
   // methods
   getStatusColorSpan,
+  getTitleWithBacklink,
   getChips
 } from '../../lib'
 
@@ -47,6 +47,7 @@ type PipelineScan = {
 
 type DenseTableProps = {
   pipelineScans: PipelineScan[];
+  title: React.JSX.Element;
 };
 
 // Example image response from Sysdig scanning API
@@ -69,7 +70,7 @@ type DenseTableProps = {
   ...
 */
 
-export const DenseTable = ({ pipelineScans }: DenseTableProps) => {
+export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
   const columns: TableColumn[] = [
     { title: 'Status', field: 'policyEvalStatus', width: "2%" },
     { title: 'Image ID', field: 'imageId', width: "23%" },
@@ -96,7 +97,7 @@ export const DenseTable = ({ pipelineScans }: DenseTableProps) => {
 
   return (
     <Table
-      title="Pipeline Scan Overview"
+      title={title}
       options={{ search: true, paging: false }}
       // sortby
 
@@ -109,51 +110,53 @@ export const DenseTable = ({ pipelineScans }: DenseTableProps) => {
 export const SysdigVMPipelineFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-
-  const { value, loading, error } = useAsync(async (): Promise<PipelineScan[]> => {
-    const timeNow = Date.now() * 1000;
-    const oneWeekAgo = timeNow - 24 * 60 * 60 * 1000 * 1000;
-    const annotations = entity.metadata.annotations;
-
-    let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/pipeline-results';
-    var name;
-
-    if (annotations) {
-      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-        uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-      } else {
-
-        var filters = []
-        
-        if (SYSDIG_IMAGE_FREETEXT_ANNOTATION in annotations) {
-          name = annotations[SYSDIG_IMAGE_FREETEXT_ANNOTATION]
-          filters.push('freeText in ("' + name + '")');
-        }
-        
-        if (filters.length == 0) {
-          return []
-        }
-        
-        uri += '?filter=' + filters.join(' and '); 
-      }
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/vulnerabilities/pipeline/';
+  
+  let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/pipeline-results';
+  let filter = '?filter=';
+  var name;
+  
+  const annotations = entity.metadata.annotations;
+  if (annotations) {
+    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
-      return [];
+
+      var filters = []
+      
+      if (SYSDIG_IMAGE_FREETEXT_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_IMAGE_FREETEXT_ANNOTATION]
+        filters.push('freeText in ("' + name + '")');
+      }
+      
+      if (filters.length == 0) {
+        return []
+      }
+      
+      filter += filters.join(' and '); 
+      uri += filter;
+      backlink += filter;
     }
 
-    const requestOptions = {
-      method: 'GET',
-    };
+    const { value, loading, error } = useAsync(async (): Promise<PipelineScan[]> => {
+      const requestOptions = {
+        method: 'GET',
+      };
+  
+      const response = await fetch(uri, requestOptions);
+      const data = await response.json();
+      return data.data;
+    }, []);
+  
+    if (loading) {
+      return <Progress />;
+    } else if (error) {
+      return <Alert severity="error">{error.message}</Alert>;
+    }
+  
+    return <DenseTable pipelineScans={value || []} title={getTitleWithBacklink("Pipeline Scan Overview", backlink) || []}/>;
 
-    const response = await fetch(uri, requestOptions);
-    const data = await response.json();
-    return data.data;
-  }, []);
-
-  if (loading) {
-    return <Progress />;
-  } else if (error) {
-    return <Alert severity="error">{error.message}</Alert>;
+  } else {
+    return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
-
-  return <DenseTable pipelineScans={value || []} />;
 };

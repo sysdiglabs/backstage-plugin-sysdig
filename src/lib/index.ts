@@ -43,5 +43,6 @@ export {
     getFailed,
     getPassed,
     getResourceName,
+    getTitleWithBacklink,
     urlEncode
 } from './ui'
