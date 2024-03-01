@@ -45,6 +45,7 @@
     "msw": "^1.0.0"
   },
   "files": [
+    "config.d.ts",
     "dist"
   ],
   "module": "./dist/index.esm.js"
