@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - update-publish-workflow
   workflow_dispatch: {}
 jobs:
   release:
@@ -20,9 +21,11 @@ jobs:
           git config user.email "github-actions@github.com"
       - name: Check whether it's the latest commit
         run:  if [[ $(git ls-remote origin -h ${{ github.ref }} | cut -f1) != ${{ github.sha }} ]]; then exit 1; fi
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4.0.2
-        with:
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}        
+        with:  
           node-version: 20
           registry-url: https://registry.npmjs.org
       - name: Install build dependencies
@@ -44,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
-      - name: Setup NPM registry
-        run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+      # - name: Setup NPM registry
+      #   run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
       - name: Release to NPM
         run: npm publish --access public
