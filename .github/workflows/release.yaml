@@ -39,7 +39,7 @@ jobs:
       - name: Push new changelog to git
         run: git push --follow-tags
       - name: Release to GitHub releases
-        run: errout=$(mktemp); gh release create $(cat  package.json | jq -r .version) -R $GITHUB_REPOSITORY -F CHANGELOG.md -t $(cat  package.json | jq -r .version) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
+        run: errout=$(mktemp); gh release create $(cat  package.json | jq -r .version) -R $GITHUB_REPOSITORY -t $(cat  package.json | jq -r .version) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
