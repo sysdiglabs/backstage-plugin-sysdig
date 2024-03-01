@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - update-publish-workflow
   workflow_dispatch: {}
 jobs:
   release:
@@ -47,7 +46,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
-      # - name: Setup NPM registry
-      #   run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
       - name: Release to NPM
         run: npm publish --access public
