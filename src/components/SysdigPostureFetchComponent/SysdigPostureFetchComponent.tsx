@@ -55,7 +55,11 @@ import {
   getGauge,
   getScope,
   getResourceName,
-  getTitleWithBacklink
+  getTitleWithBacklink,
+
+  API_PROXY_BASE_PATH,
+  API_INVENTORY,
+  BACKLINK_INVENTORY
 } from '../../lib'
 
 
@@ -208,11 +212,11 @@ export const DenseTable = ({ postureScans, title }: DenseTableProps) => {
 export const SysdigPostureFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/inventory';
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_INVENTORY;
 
   const annotations = entity.metadata.annotations;
 
-  let uri = backendUrl + '/api/proxy/sysdig/api/cspm/v1/inventory/resources';
+  let uri = backendUrl + API_PROXY_BASE_PATH + API_INVENTORY;
   let filter = '?filter=';
   var name;
 

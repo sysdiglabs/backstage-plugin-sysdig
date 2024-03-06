@@ -27,7 +27,11 @@ import {
 
   // methods
   getChips,
-  getTitleWithBacklink
+  getTitleWithBacklink,
+
+  API_PROXY_BASE_PATH,
+  API_VULN_REGISTRY,
+  BACKLINK_VULN_REGISTRY
 } from '../../lib'
 
 
@@ -99,9 +103,9 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
 export const SysdigVMRegistryFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/vulnerabilities/registry/';
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_VULN_REGISTRY;
 
-  let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/registry-results';
+  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_REGISTRY;
   let filter = '?filter=';
   var name;
 

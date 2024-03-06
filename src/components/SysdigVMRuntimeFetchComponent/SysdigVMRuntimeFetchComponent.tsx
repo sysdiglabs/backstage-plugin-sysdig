@@ -33,7 +33,11 @@ import {
   getStatusColorSpan,
   getChips,
   getDetails,
-  getTitleWithBacklink
+  getTitleWithBacklink,
+
+  API_PROXY_BASE_PATH,
+  API_VULN_RUNTIME,
+  BACKLINK_VULN_RUNTIME
 } from '../../lib'
 
 
@@ -150,9 +154,9 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 export const SysdigVMRuntimeFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/vulnerabilities/runtime/';
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_VULN_RUNTIME;
   
-  let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/runtime-results';
+  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_RUNTIME;
   let filter = '?filter=';
   var name;
   

@@ -27,7 +27,11 @@ import {
   // methods
   getStatusColorSpan,
   getTitleWithBacklink,
-  getChips
+  getChips,
+
+  API_PROXY_BASE_PATH,
+  API_VULN_PIPELINE,
+  BACKLINK_VULN_PIPELINE
 } from '../../lib'
 
 type PipelineScan = {
@@ -110,9 +114,9 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 export const SysdigVMPipelineFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + '#/vulnerabilities/pipeline/';
+  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_VULN_PIPELINE;
   
-  let uri = backendUrl + '/api/proxy/sysdig/secure/vulnerability/v1beta1/pipeline-results';
+  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_PIPELINE;
   let filter = '?filter=';
   var name;
   
