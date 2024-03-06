@@ -46,3 +46,15 @@ export {
     getTitleWithBacklink,
     urlEncode
 } from './ui'
+
+export {
+    API_PROXY_BASE_PATH,
+    API_VULN_RUNTIME,
+    API_VULN_REGISTRY,
+    API_VULN_PIPELINE,
+    API_INVENTORY,
+    BACKLINK_VULN_RUNTIME,
+    BACKLINK_VULN_REGISTRY,
+    BACKLINK_VULN_PIPELINE,
+    BACKLINK_INVENTORY    
+} from './endpoints'
