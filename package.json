@@ -48,5 +48,6 @@
     "config.d.ts",
     "dist"
   ],
+  "configSchema": "config.d.ts",
   "module": "./dist/index.esm.js"
 }
