@@ -24,12 +24,10 @@ Please refer to the [official documentation](https://docs.sysdig.com/en/docs/adm
 
 #### Via NPM
 
-TBA
-
-<!-- ```bash
+```bash
 # From your Backstage root directory
 yarn --cwd packages/app add @sysdig/backstage-plugin-sysdig
-``` -->
+```
 
 #### Via GitHub
 
