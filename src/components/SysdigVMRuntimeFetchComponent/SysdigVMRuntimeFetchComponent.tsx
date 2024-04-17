@@ -158,7 +158,7 @@ export const SysdigVMRuntimeFetchComponent = () => {
   
   let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_RUNTIME;
   let filter = '?filter=';
-  var name;
+  var names;
   
   const annotations = entity.metadata.annotations;
   if (annotations) {
@@ -170,28 +170,28 @@ export const SysdigVMRuntimeFetchComponent = () => {
       var filters = []
       
       if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION]
-        filters.push('kubernetes.cluster.name="' + name + '"');
+        names = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+        filters.push(`kubernetes.cluster.name in (${names})`);
       }
       
       if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_NAMESPACE_ANNOTATION]
-        filters.push('kubernetes.namespace.name="' + name + '"');
+        names = annotations[SYSDIG_NAMESPACE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+        filters.push(`kubernetes.namespace.name in (${names})`);
       }
 
       if (SYSDIG_WORKLOAD_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_WORKLOAD_ANNOTATION]
-        filters.push('kubernetes.workload.name="' + name + '"');
+        names = annotations[SYSDIG_WORKLOAD_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+        filters.push(`kubernetes.workload.name in (${names})`);
       }
 
       if (SYSDIG_WORKLOAD_TYPE_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_WORKLOAD_TYPE_ANNOTATION]
-        filters.push('kubernetes.workload.type="' + name + '"');
+        names = annotations[SYSDIG_WORKLOAD_TYPE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+        filters.push(`kubernetes.workload.type in (${names})`);
       }
 
       if (SYSDIG_CONTAINER_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_CONTAINER_ANNOTATION]
-        filters.push('kubernetes.pod.container.name="' + name + '"');
+        names = annotations[SYSDIG_CONTAINER_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+        filters.push(`kubernetes.pod.container.name in (${names})`);
       }
       
       if (filters.length == 0) {
