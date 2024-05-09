@@ -53,8 +53,5 @@ export {
     API_VULN_REGISTRY,
     API_VULN_PIPELINE,
     API_INVENTORY,
-    BACKLINK_VULN_RUNTIME,
-    BACKLINK_VULN_REGISTRY,
-    BACKLINK_VULN_PIPELINE,
-    BACKLINK_INVENTORY    
+    getBacklink  
 } from './endpoints'
