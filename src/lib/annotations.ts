@@ -83,6 +83,8 @@ export const SYSDIG_SOURCE_TYPE_ANNOTATION = "sysdigcloud.com/source-type";
  * Runtime
  */
 
+// Runtime annotation values also support comma separated values. Example "prod-gke,prod-eks"
+
 // The cluster that will be included in the results. Example: "prod-gke"
 export const SYSDIG_CLUSTER_NAME_ANNOTATION = "sysdigcloud.com/kubernetes-cluster-name";
 

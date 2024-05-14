@@ -59,7 +59,7 @@ import {
 
   API_PROXY_BASE_PATH,
   API_INVENTORY,
-  BACKLINK_INVENTORY
+  getBacklink
 } from '../../lib'
 
 
@@ -212,8 +212,10 @@ export const DenseTable = ({ postureScans, title }: DenseTableProps) => {
 export const SysdigPostureFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_INVENTORY;
+  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
+  var backlink = getBacklink(endpoint, backlink_config, "inventory");
   const annotations = entity.metadata.annotations;
 
   let uri = backendUrl + API_PROXY_BASE_PATH + API_INVENTORY;

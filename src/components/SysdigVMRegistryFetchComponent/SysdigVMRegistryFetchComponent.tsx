@@ -31,7 +31,7 @@ import {
 
   API_PROXY_BASE_PATH,
   API_VULN_REGISTRY,
-  BACKLINK_VULN_REGISTRY
+  getBacklink
 } from '../../lib'
 
 
@@ -103,7 +103,10 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
 export const SysdigVMRegistryFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_VULN_REGISTRY;
+  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
+
+  var backlink = getBacklink(endpoint, backlink_config, "vm-registry");
 
   let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_REGISTRY;
   let filter = '?filter=';

@@ -31,7 +31,7 @@ import {
 
   API_PROXY_BASE_PATH,
   API_VULN_PIPELINE,
-  BACKLINK_VULN_PIPELINE
+  getBacklink
 } from '../../lib'
 
 type PipelineScan = {
@@ -114,7 +114,10 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 export const SysdigVMPipelineFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
-  var backlink = useApi(configApiRef).getString('sysdig.endpoint') + BACKLINK_VULN_PIPELINE;
+  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
+
+  var backlink = getBacklink(endpoint, backlink_config, "vm-pipeline");
   
   let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_PIPELINE;
   let filter = '?filter=';
