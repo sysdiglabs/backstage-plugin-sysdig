@@ -23,6 +23,7 @@ import {
   // annotations
   SYSDIG_REGISTRY_NAME_ANNOTATION,
   SYSDIG_REGISTRY_VENDOR_ANNOTATION,
+  SYSDIG_REGISTRY_REPOSITORY_ANNOTATION,
   SYSDIG_CUSTOM_FILTER_ANNOTATION,
 
   // methods
@@ -32,8 +33,7 @@ import {
   API_PROXY_BASE_PATH,
   API_VULN_REGISTRY,
   getBacklink
-} from '../../lib'
-
+} from '../../lib';
 
 type RegistryScan =   {
   mainAssetName: string,
@@ -128,6 +128,11 @@ export const SysdigVMRegistryFetchComponent = () => {
       if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
         name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION]
         filters.push('registry.vendor="' + name + '"');
+      }
+
+      if (SYSDIG_REGISTRY_REPOSITORY_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION]
+        filters.push('repository.name="' + name + '"');
       }
       
       if (filters.length == 0) {

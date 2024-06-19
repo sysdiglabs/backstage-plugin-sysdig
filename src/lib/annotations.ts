@@ -110,6 +110,9 @@ export const SYSDIG_REGISTRY_NAME_ANNOTATION = "sysdigcloud.com/registry-name";
 // The registry vendor that will be included in the results. Example: "harbor"
 export const SYSDIG_REGISTRY_VENDOR_ANNOTATION = "sysdigcloud.com/registry-vendor";
 
+// The registry repository that will be included in the results. Example: "library/nginx"
+export const SYSDIG_REGISTRY_REPOSITORY_ANNOTATION = "sysdigcloud.com/registry-repository";
+
 /*
  *  Pipeline
  */
