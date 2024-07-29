@@ -26,6 +26,6 @@ export interface Config {
        * Custom backlink to Sysdig Secure.
        * @visibility frontend
        */
-      backlink: string;
+      backlink?: string;
     };
   }
