@@ -29,11 +29,9 @@ import {
   // methods
   getChips,
   getTitleWithBacklink,
-
-  API_PROXY_BASE_PATH,
-  API_VULN_REGISTRY,
   getBacklink
 } from '../../lib';
+import { sysdigApiRef } from '../../api';
 
 type RegistryScan =   {
   mainAssetName: string,
@@ -102,20 +100,19 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
 
 export const SysdigVMRegistryFetchComponent = () => {
   const { entity } = useEntity();
-  const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  const sysdigApiClient = useApi(sysdigApiRef)
   let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
   let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
   var backlink = getBacklink(endpoint, backlink_config, "vm-registry");
 
-  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_REGISTRY;
   let filter = '?filter=';
   var name;
 
   const annotations = entity.metadata.annotations;
   if (annotations) {
     if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
+      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
 
       var filters = []
@@ -140,19 +137,11 @@ export const SysdigVMRegistryFetchComponent = () => {
       }
       
       filter += filters.join(' and '); 
-      uri += filter;
       backlink += filter;
     }
 
     const { value, loading, error } = useAsync(async (): Promise<RegistryScan[]> => {
-      const requestOptions = {
-        method: 'GET',
-      };
-  
-  
-      const response = await fetch(uri, requestOptions);
-      const data = await response.json();
-      console.log(data.data)
+      const data = await sysdigApiClient.fetchVulnRegistry(filter)
       return data.data;
     }, []);
   
