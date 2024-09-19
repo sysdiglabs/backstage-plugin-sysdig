@@ -19,6 +19,7 @@ import useAsync from 'react-use/lib/useAsync';
 import Alert from '@material-ui/lab/Alert';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
+import { sysdigApiRef } from '../../api';
 
 import {
   // annotations
@@ -56,9 +57,6 @@ import {
   getScope,
   getResourceName,
   getTitleWithBacklink,
-
-  API_PROXY_BASE_PATH,
-  API_INVENTORY,
   getBacklink
 } from '../../lib'
 
@@ -212,20 +210,20 @@ export const DenseTable = ({ postureScans, title }: DenseTableProps) => {
 export const SysdigPostureFetchComponent = () => {
   const { entity } = useEntity();
   const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  const sysdigApiClient = useApi(sysdigApiRef);
   let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
   let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
   var backlink = getBacklink(endpoint, backlink_config, "inventory");
   const annotations = entity.metadata.annotations;
 
-  let uri = backendUrl + API_PROXY_BASE_PATH + API_INVENTORY;
   let filter = '?filter=';
   var name;
 
   if (annotations) {
 
     if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
+      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
 
       var filters = []
@@ -355,17 +353,11 @@ export const SysdigPostureFetchComponent = () => {
       }
 
       filter += filters.join(' and '); 
-      uri += filter;
       backlink += filter;
     }
 
     const { value, loading, error } = useAsync(async (): Promise<PostureScan[]> => {
-      const requestOptions = {
-        method: 'GET',
-      };
-
-      const response = await fetch(uri, requestOptions);
-      const data = await response.json();
+      const data = await sysdigApiClient.fetchInventory(filter)
       return data.data;
     }, []);
   
