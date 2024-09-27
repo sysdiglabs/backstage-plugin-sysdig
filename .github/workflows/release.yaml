@@ -22,7 +22,6 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@main
       - name: Install dependencies
         run: |
-          yarn clean
           yarn install --immutable
       - name: Build
         run: |
