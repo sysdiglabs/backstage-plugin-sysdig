@@ -12,7 +12,7 @@
     // "disableReferencedProjectLoad": true,             /* Reduce the number of projects loaded automatically by TypeScript. */
 
     /* Language and Environment */
-    "target": "es2016",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "target": "es2019",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     // "lib": [],                                        /* Specify a set of bundled library declaration files that describe the target runtime environment. */
     // "jsx": "preserve",                                /* Specify what JSX code is generated. */
     // "experimentalDecorators": true,                   /* Enable experimental support for legacy experimental decorators. */
@@ -56,7 +56,13 @@
     "sourceMap": true,                                /* Create source map files for emitted JavaScript files. */
     // "inlineSourceMap": true,                          /* Include sourcemap files inside the emitted JavaScript. */
     // "outFile": "./",                                  /* Specify a file that bundles all outputs into one JavaScript file. If 'declaration' is true, also designates a file that bundles all .d.ts output. */
-    "outDir": "./dist-types/src",                                   /* Specify an output folder for all emitted files. */
+    "outDir": "dist-types",                                   /* Specify an output folder for all emitted files. */
+    "rootDir": "src",
+
+    "emitDeclarationOnly": true, // Optional: Only emit declaration files without compiling JavaScript
+    "skipLibCheck": true, // Optional: Skips checking types of .d.ts files
+    "moduleResolution": "node",
+    
     // "removeComments": true,                           /* Disable emitting comments. */
     "noEmit": false,                                   /* Disable emitting files from a compilation. */
     // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */
@@ -106,5 +112,6 @@
     /* Completeness */
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
-  }
+  },
+  "include": ["src/**/*"]
 }
