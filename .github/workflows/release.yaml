@@ -24,7 +24,7 @@ jobs:
         run: |
           yarn global add @backstage/cli
           yarn clean
-          yarn install --frozen-lockfile
+          yarn install --immutable
       - name: Build
         run: |
           yarn tsc --jsx react-jsx
