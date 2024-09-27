@@ -132,3 +132,6 @@ yarn.lock
 
 # tsc
 dist-types/
+
+.direnv
+.secrets
