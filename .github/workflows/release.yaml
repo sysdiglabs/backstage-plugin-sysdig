@@ -24,7 +24,6 @@ jobs:
         run: |
           yarn clean
           yarn install --immutable
-          yarn global add @backstage/cli
       - name: Build
         run: |
           yarn tsc
