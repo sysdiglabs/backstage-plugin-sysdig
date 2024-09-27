@@ -34,11 +34,9 @@ import {
   getChips,
   getDetails,
   getTitleWithBacklink,
-
-  API_PROXY_BASE_PATH,
-  API_VULN_RUNTIME,
   getBacklink
 } from '../../lib'
+import { sysdigApiRef } from '../../api';
 
 
 type RuntimeScan =   {
@@ -153,13 +151,13 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 
 export const SysdigVMRuntimeFetchComponent = () => {
   const { entity } = useEntity();
-  const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  const sysdigApiClient = useApi(sysdigApiRef)
   let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
   let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
   var backlink = getBacklink(endpoint, backlink_config, "vm-runtime");
   
-  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_RUNTIME;
+
   let filter = '?filter=';
   var names;
   
@@ -167,7 +165,7 @@ export const SysdigVMRuntimeFetchComponent = () => {
   if (annotations) {
 
     if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
+      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
 
       var filters = []
@@ -202,17 +200,11 @@ export const SysdigVMRuntimeFetchComponent = () => {
       }
       
       filter += filters.join(' and '); 
-      uri += filter;
       backlink += filter; 
     }
 
     const { value, loading, error } = useAsync(async (): Promise<RuntimeScan[]> => {
-      const requestOptions = {
-        method: 'GET',
-      };
-  
-      const response = await fetch(uri, requestOptions);
-      const data = await response.json();
+      const data = await sysdigApiClient.fetchVulnRuntime(filter)
       return data.data;
     }, []);
   

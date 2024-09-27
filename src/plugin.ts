@@ -13,12 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { createPlugin, createRoutableExtension } from '@backstage/core-plugin-api';
+import { configApiRef, createApiFactory, createPlugin, createRoutableExtension, fetchApiRef } from '@backstage/core-plugin-api';
+import { SysdigApiClient, sysdigApiRef } from './api';
 
 import { rootRouteRef } from './routes';
 
 export const sysdigPlugin = createPlugin({
   id: 'sysdig',
+  apis: [
+    createApiFactory({
+      api: sysdigApiRef,
+      deps: { configApi: configApiRef, fetchApi: fetchApiRef},
+      factory: ({ configApi, fetchApi }) => new SysdigApiClient({ configApi, fetchApi})
+    })
+  ],
   routes: {
     root: rootRouteRef,
   },

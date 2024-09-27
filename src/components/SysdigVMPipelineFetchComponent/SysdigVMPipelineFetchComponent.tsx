@@ -28,11 +28,9 @@ import {
   getStatusColorSpan,
   getTitleWithBacklink,
   getChips,
-
-  API_PROXY_BASE_PATH,
-  API_VULN_PIPELINE,
   getBacklink
 } from '../../lib'
+import { sysdigApiRef } from '../../api';
 
 type PipelineScan = {
   createdAt: Date,
@@ -113,20 +111,19 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 
 export const SysdigVMPipelineFetchComponent = () => {
   const { entity } = useEntity();
-  const backendUrl = useApi(configApiRef).getString('backend.baseUrl');
+  const sysdigApiClient = useApi(sysdigApiRef)
   let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
   let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
   var backlink = getBacklink(endpoint, backlink_config, "vm-pipeline");
   
-  let uri = backendUrl + API_PROXY_BASE_PATH + API_VULN_PIPELINE;
   let filter = '?filter=';
   var name;
   
   const annotations = entity.metadata.annotations;
   if (annotations) {
     if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      uri += '?filter=' + annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
+      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
     } else {
 
       var filters = []
@@ -141,17 +138,11 @@ export const SysdigVMPipelineFetchComponent = () => {
       }
       
       filter += filters.join(' and '); 
-      uri += filter;
       backlink += filter;
     }
 
     const { value, loading, error } = useAsync(async (): Promise<PipelineScan[]> => {
-      const requestOptions = {
-        method: 'GET',
-      };
-  
-      const response = await fetch(uri, requestOptions);
-      const data = await response.json();
+      const data = await sysdigApiClient.fetchVulnPipeline(filter)
       return data.data;
     }, []);
   
