@@ -22,12 +22,12 @@ jobs:
       - uses: DeterminateSystems/flake-checker-action@main
       - name: Install dependencies
         run: |
-          yarn global add @backstage/cli
           yarn clean
           yarn install --immutable
+          yarn global add @backstage/cli
       - name: Build
         run: |
-          yarn tsc --jsx react-jsx
+          yarn tsc
           yarn build
       - name: Release to GitHub releases
         run: errout=$(mktemp); gh release create $(cat  package.json | jq -r .version) -R $GITHUB_REPOSITORY -t $(cat  package.json | jq -r .version) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
