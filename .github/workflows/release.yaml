@@ -34,4 +34,4 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_REF: ${{ github.ref }}
       - name: Release to NPM
-        run: npm publish --access public
+        run: yarn npm publish --access public
