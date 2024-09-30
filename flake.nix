@@ -27,6 +27,8 @@
             mkShell {
               packages =
                 [
+                  gh
+                  jq
                   nodejs
                   typescript
                   yarn-berry
