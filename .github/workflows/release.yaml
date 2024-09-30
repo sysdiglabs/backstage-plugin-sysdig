@@ -27,9 +27,10 @@ jobs:
         run: |
           yarn tsc
           yarn build
-      - name: Configure npm for publishing
+      - name: Configure yarn for publishing
         run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_AUTH_TOKEN }}" > ~/.npmrc
+          yarn config set -H 'npmAuthToken' "${{secrets.NPM_AUTH_TOKEN}}"
+          # yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.GITHUB_TOKEN}}"
       - name: Release to GitHub releases
         run: errout=$(mktemp); gh release create $(cat  package.json | jq -r .version) -R $GITHUB_REPOSITORY -t $(cat  package.json | jq -r .version) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
         env:
