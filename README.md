@@ -81,9 +81,9 @@ proxy:
 
 ...
 
-+ sysdig:
-+   endpoint: ${SYSDIG_SECURE_ENDPOINT}
-+   backlink: https://... # Optional override base link for backlinks. Must end in '/'.
++sysdig:
++  endpoint: ${SYSDIG_SECURE_ENDPOINT}
++  backlink: https://... # Optional override base link for backlinks. Must end in '/'.
 ```
 
 - Set the environment variable `SYSDIG_SECURE_ENDPOINT` to your Sysdig Secure Endpoint.

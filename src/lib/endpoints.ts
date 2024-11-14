@@ -24,18 +24,20 @@ export const API_INVENTORY = "/api/cspm/v1/inventory/resources";
  */
 let DEFAULT_BACKLINK_BASE: string = "https://secure.sysdig.com/"
 
-const BACKLINKS: Record<string, string> = {
+let SECURE_PREFIX: string = "secure/#/";
+
+const SECURE_BACKLINKS: Record<string, string> = {
     // Backlink path to Vulnerability Management at Runtime
-    "vm-runtime": "#/vulnerabilities/runtime/",
+    "vm-runtime": SECURE_PREFIX + "vulnerabilities/runtime/",
 
     // Backlink path to Vulnerability Management at Registry
-    "vm-registry": "#/vulnerabilities/registry/",
+    "vm-registry": SECURE_PREFIX + "vulnerabilities/registry/",
 
     // Backlink path to Vulnerability Management at Pipeline
-    "vm-pipeline": "#/vulnerabilities/pipeline/",
+    "vm-pipeline": SECURE_PREFIX + "vulnerabilities/pipeline/",
 
     // Backlink path to Inventory
-    "inventory": "#/inventory"
+    "inventory": SECURE_PREFIX + "inventory"
 }
 
 export function getBacklink(endpoint: string | undefined, backlink: string | undefined, section: string) : string {
@@ -47,7 +49,7 @@ export function getBacklink(endpoint: string | undefined, backlink: string | und
         backlink_base = endpoint
     }
 
-    let backlink_section : string = BACKLINKS[section];
+    let backlink_section : string = SECURE_BACKLINKS[section];
 
     if (backlink_section === undefined) {
         return "";
