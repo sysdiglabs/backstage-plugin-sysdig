@@ -104,14 +104,24 @@ export const SYSDIG_CONTAINER_ANNOTATION = "sysdigcloud.com/kubernetes-container
  * Registry
  */
 
+// DEPRECATION NOTICE: The following annotation is deprecated and will be removed in a future release.
+//  - Use SYSDIG_REGISTRY_FREETEXT_ANNOTATION instead.
 // The registry name that will be included in the results. Example: "registry-harbor-registry.registry.svc.cluster.local:5443"
 export const SYSDIG_REGISTRY_NAME_ANNOTATION = "sysdigcloud.com/registry-name";
 
+// DEPRECATION NOTICE: The following annotation is deprecated and will be removed in a future release.
+//  - Use SYSDIG_REGISTRY_FREETEXT_ANNOTATION instead.
 // The registry vendor that will be included in the results. Example: "harbor"
 export const SYSDIG_REGISTRY_VENDOR_ANNOTATION = "sysdigcloud.com/registry-vendor";
 
+// DEPRECATION NOTICE: The following annotation is deprecated and will be removed in a future release.
+//  - Use SYSDIG_REGISTRY_FREETEXT_ANNOTATION instead.
 // The registry repository that will be included in the results. Example: "library/nginx"
 export const SYSDIG_REGISTRY_REPOSITORY_ANNOTATION = "sysdigcloud.com/registry-repository";
+
+// Free text search to match an image or set of images.
+// Examples: "quay.io", "library/nginx", ":latest"
+export const SYSDIG_REGISTRY_FREETEXT_ANNOTATION = "sysdigcloud.com/registry-freetext";
 
 /*
  *  Pipeline

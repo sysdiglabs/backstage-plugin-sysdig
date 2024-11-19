@@ -24,6 +24,7 @@ import {
   SYSDIG_REGISTRY_NAME_ANNOTATION,
   SYSDIG_REGISTRY_VENDOR_ANNOTATION,
   SYSDIG_REGISTRY_REPOSITORY_ANNOTATION,
+  SYSDIG_REGISTRY_FREETEXT_ANNOTATION,
   SYSDIG_CUSTOM_FILTER_ANNOTATION,
 
   // methods
@@ -130,6 +131,11 @@ export const SysdigVMRegistryFetchComponent = () => {
       if (SYSDIG_REGISTRY_REPOSITORY_ANNOTATION in annotations) {
         name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION]
         filters.push('repository.name="' + name + '"');
+      }
+
+      if (SYSDIG_REGISTRY_FREETEXT_ANNOTATION in annotations) {
+        name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION]
+        filters.push('freeText in ("' + name + '")');
       }
       
       if (filters.length == 0) {
