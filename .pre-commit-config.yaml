@@ -14,8 +14,8 @@ repos:
         entry: yarn lint
         language: system
         pass_filenames: false
-      # - id: test
-      #   name: run tests
-      #   entry: yarn test
-      #   language: system
-      #   pass_filenames: false
+      - id: test
+        name: run tests
+        entry: yarn test --watchAll=false
+        language: system
+        pass_filenames: false

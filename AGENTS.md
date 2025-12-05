@@ -19,7 +19,7 @@ This repository contains the **Sysdig Plugin for Backstage**, a frontend plugin 
 ## Build, Test, & Development
 - **`yarn install`**: Install dependencies.
 - **`yarn start`**: Starts the local development server at `http://localhost:3000`. Uses `dev/index.tsx` for context. If address is still in use use `fuser -k 3000/tcp`.
-- **`yarn test`**: Runs unit tests using Jest.
+- **`yarn test`**: Runs unit tests using Jest. Use `yarn test --watchAll=false` to run tests once without watch mode.
 - **`yarn lint`**: Runs ESLint to check code quality.
 - **`yarn build`**: Builds the plugin for distribution.
 - **`just bump`**: Updates dependencies (requires Nix/Just).

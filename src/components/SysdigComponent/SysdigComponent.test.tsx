@@ -21,7 +21,38 @@ import { screen } from '@testing-library/react';
 import {
   setupRequestMockHandlers,
   renderInTestApp,
+  TestApiProvider,
 } from "@backstage/test-utils";
+import { EntityProvider } from '@backstage/plugin-catalog-react';
+import { sysdigApiRef } from '../../api';
+import { configApiRef } from '@backstage/core-plugin-api';
+import { ConfigReader } from '@backstage/config';
+
+const mockEntity = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: {
+    name: 'test-component',
+    annotations: {},
+  },
+};
+
+const mockSysdigApi = {
+  fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [] }),
+  fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [] }),
+  fetchVulnPipeline: jest.fn().mockResolvedValue({ data: [] }),
+  fetchInventory: jest.fn().mockResolvedValue({ data: [] }),
+};
+
+const mockConfig = new ConfigReader({
+  sysdig: {
+    endpoint: 'https://sysdig.com',
+    backlink: 'https://sysdig.com/backlink',
+  },
+  backend: {
+    baseUrl: 'http://localhost:7007',
+  },
+});
 
 describe('SysdigComponent', () => {
   const server = setupServer();
@@ -36,7 +67,16 @@ describe('SysdigComponent', () => {
   });
 
   it('should render', async () => {
-    await renderInTestApp(<SysdigComponent />);
-    expect(screen.getByText('Welcome to sysdig!')).toBeInTheDocument();
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, mockSysdigApi],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+    expect(screen.getByText('Sysdig Security Report')).toBeInTheDocument();
   });
 });

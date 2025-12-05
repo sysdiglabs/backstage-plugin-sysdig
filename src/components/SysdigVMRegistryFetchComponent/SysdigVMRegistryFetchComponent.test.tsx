@@ -14,21 +14,55 @@
  * limitations under the License.
  */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { SysdigVMRegistryFetchComponent } from './SysdigVMRegistryFetchComponent';
+import { EntityProvider } from '@backstage/plugin-catalog-react';
+import { renderInTestApp, TestApiProvider } from '@backstage/test-utils';
+import { sysdigApiRef } from '../../api';
+import { configApiRef } from '@backstage/core-plugin-api';
+import { ConfigReader } from '@backstage/config';
+
+const mockEntity = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: {
+    name: 'test-component',
+    annotations: {},
+  },
+};
+
+const mockSysdigApi = {
+  fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [] }),
+  fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [] }),
+  fetchVulnPipeline: jest.fn().mockResolvedValue({ data: [] }),
+  fetchInventory: jest.fn().mockResolvedValue({ data: [] }),
+};
+
+const mockConfig = new ConfigReader({
+  sysdig: {
+    endpoint: 'https://sysdig.com',
+    backlink: 'https://sysdig.com/backlink',
+  },
+  backend: {
+    baseUrl: 'http://localhost:7007',
+  },
+});
 
 describe('SysdigVMRegistryFetchComponent', () => {
   it('renders the user table', async () => {
-    render(<SysdigVMRegistryFetchComponent />);
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, mockSysdigApi],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRegistryFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
 
     // Wait for the table to render
-    const table = await screen.findByRole('table');
-    const nationality = screen.getAllByText("GB")
-    // Assert that the table contains the expected user data
+    const table = await screen.findByText('Registry Scan Overview');
     expect(table).toBeInTheDocument();
-    expect(screen.getByAltText('Carolyn')).toBeInTheDocument();
-    expect(screen.getByText('Carolyn Moore')).toBeInTheDocument();
-    expect(screen.getByText('carolyn.moore@example.com')).toBeInTheDocument();
-    expect(nationality[0]).toBeInTheDocument();
   });
 });
