@@ -1,12 +1,12 @@
 import { ConfigApi, FetchApi } from "@backstage/core-plugin-api";
-import { SysdigApi } from "./SysdigApi";
+import { SysdigApi } from "../../app/ports/SysdigApi";
 import {
   API_INVENTORY,
   API_PROXY_BASE_PATH,
   API_VULN_PIPELINE,
   API_VULN_REGISTRY,
   API_VULN_RUNTIME,
-} from "../lib";
+} from "../../lib";
 
 export class SysdigApiClient implements SysdigApi {
   private readonly fetchApi: FetchApi;
