@@ -42,7 +42,7 @@ const support = {
 
 export const SysdigComponent = () => (
   <Page themeId="tool">
-    <Header title="Sysdig Security Report" subtitle="Pipeline, Registry & Runtime information"></Header>
+    <Header title="Sysdig Security Report" subtitle="Pipeline, Registry & Runtime information" />
     <Content>
       <ContentHeader title="Vulnerabilities Report">
         <SupportButton items={[support]}>This is the official Sysdig plugin for Backstage.</SupportButton>
@@ -59,7 +59,7 @@ export const SysdigComponent = () => (
         </Grid>
       </Grid>
       <hr/>
-      <ContentHeader title="Posture Report"></ContentHeader>
+      <ContentHeader title="Posture Report" />
       <Grid container spacing={3} direction="column">    
         <Grid item>
           <SysdigPostureFetchComponent />

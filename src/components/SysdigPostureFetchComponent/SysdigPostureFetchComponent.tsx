@@ -183,7 +183,7 @@ export const DenseTable = ({ postureScans, title }: DenseTableProps) => {
     { title: 'Details', field: 'details', width: "2%"  }
   ];
 
-  const data = postureScans.filter(scan => { return scan.posturePolicySummary != null })
+  const data = postureScans.filter(scan => { return scan.posturePolicySummary !== null })
     .flatMap(scan => {
     return {
       name: getResourceName(scan.name, scan.type, scan.platform, scan.resourceOrigin),

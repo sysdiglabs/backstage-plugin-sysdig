@@ -6,8 +6,6 @@ import InfoIcon from '@material-ui/icons/Info';
 import Typography from '@material-ui/core/Typography';
 import { Gauge } from '@backstage/core-components';
 import OpenInNew from '@material-ui/icons/OpenInNew';
-import InfoIcon from '@material-ui/icons/Info';
-
 const interleave = (arr: any, thing: any) => [].concat(...arr.map((n: any) => [n, thing])).slice(0, -1)
 
 const getStatusColorSpan = (status: string) => {
@@ -54,7 +52,7 @@ function getDetails(scan: any) {
           {(() => {
             const details: any = [];
             if ("scope" in scan) details.push(...getScope(scan.scope));
-            //if ("configuration" in scan) details.concat(getScope(scan.configuration))
+            // if ("configuration" in scan) details.concat(getScope(scan.configuration))
             if ("labels" in scan) {
               details.push(
                 <div key="labels">
