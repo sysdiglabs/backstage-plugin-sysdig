@@ -28,7 +28,7 @@ import { SysdigVMPipelineFetchComponent } from '../SysdigVMPipelineFetchComponen
 import { SysdigPostureFetchComponent } from '../SysdigPostureFetchComponent';
 
 
-let support = {
+const support = {
   title: 'GitHub',
   icon: 'github',
   links: [
