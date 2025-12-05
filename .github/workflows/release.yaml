@@ -1,12 +1,31 @@
-name: release
+name: Release workflow
 on:
   push:
     branches:
       - main
-  workflow_dispatch: {}
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # We only need the current and the previous commit
+
+      - name: Check if the package.version has changed
+        id: check_changes
+        run: |
+          if git diff --unified=0 HEAD^ package.json | grep '"version":'; then
+            echo "changes=detected" >> $GITHUB_OUTPUT
+          else
+            echo "changes=none" >> $GITHUB_OUTPUT
+          fi
+
+    outputs:
+      changes: ${{ steps.check_changes.outputs.changes }}
   release:
     runs-on: ubuntu-latest
+    if: needs.check-changes.outputs.changes == 'detected'
     defaults:
       run:
         shell: nix develop --command bash {0}
@@ -30,7 +49,6 @@ jobs:
       - name: Configure yarn for publishing
         run: |
           yarn config set -H 'npmAuthToken' "${{secrets.NPM_AUTH_TOKEN}}"
-          # yarn config set -H 'npmRegistries["//npm.pkg.github.com"].npmAuthToken' "${{secrets.GITHUB_TOKEN}}"
       - name: Release to GitHub releases
         run: errout=$(mktemp); gh release create $(cat  package.json | jq -r .version) -R $GITHUB_REPOSITORY -t $(cat  package.json | jq -r .version) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q "Release.tag_name already exists" $errout; then cat $errout; exit $exitcode; fi
         env:

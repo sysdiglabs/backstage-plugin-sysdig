@@ -54,6 +54,13 @@ This repository contains the **Sysdig Plugin for Backstage**, a frontend plugin 
   - Include screenshots for UI changes.
   - Ensure `yarn test` and `yarn lint` pass before requesting review.
 
+## Release Process
+The release process is semi-automated:
+1.  **Manual Version Bump**: Before creating a release, the `version` field in `package.json` must be manually updated (e.g., from `1.3.2` to `1.3.3`).
+2.  **Automated Release**: Once the version is manually updated and pushed to the `main` branch, the GitHub Actions workflow (`.github/workflows/release.yaml`) automatically:
+    *   Creates a new GitHub Release with the updated version.
+    *   Publishes the package to NPM.
+
 ## Documentation Maintenance
 - Keep `README.md` updated with new annotations or configuration options.
 - Maintain this `AGENTS.md` to reflect architectural changes.
