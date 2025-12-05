@@ -25,19 +25,22 @@
           devShells.default =
             with pkgs;
             mkShell {
-              packages =
-                [
-                  gh
-                  jq
-                  nodejs
-                  typescript
-                  yarn-berry
-                  (python3.withPackages (p: with p; [ gyp ]))
-                ]
-                ++ (with nodePackages; [
-                  typescript-language-server
-                  node-gyp
-                ]);
+              packages = [
+                gh
+                jq
+                nodejs
+                pre-commit
+                typescript
+                yarn-berry
+                (python3.withPackages (p: with p; [ gyp ]))
+              ]
+              ++ (with nodePackages; [
+                typescript-language-server
+                node-gyp
+              ]);
+              shellHook = ''
+                pre-commit install
+              '';
             };
 
           formatter = pkgs.nixfmt-rfc-style;

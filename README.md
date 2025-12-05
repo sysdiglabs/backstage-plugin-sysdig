@@ -115,7 +115,7 @@ metadata:
 
     # VM Pipeline
     sysdigcloud.com/image-freetext: ghcr.io/sysdiglabs
-    
+
     # Posture
     sysdigcloud.com/resource-name: sock-shop-carts
     sysdigcloud.com/resource-type: "Deployment"

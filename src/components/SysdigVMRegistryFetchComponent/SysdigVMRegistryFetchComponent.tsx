@@ -116,12 +116,12 @@ export const SysdigVMRegistryFetchComponent = () => {
         currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
       } else {
         const filters: string[] = [];
-        
+
         if (SYSDIG_REGISTRY_NAME_ANNOTATION in annotations) {
           name = annotations[SYSDIG_REGISTRY_NAME_ANNOTATION];
           filters.push(`registry.name="${name}"`);
         }
-        
+
         if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
           name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION];
           filters.push(`registry.vendor="${name}"`);
@@ -131,12 +131,12 @@ export const SysdigVMRegistryFetchComponent = () => {
           name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION];
           filters.push(`repository.name="${name}"`);
         }
-        
+
         if (filters.length === 0) {
           return { filter: '', backlink: '' }; // No annotations, no filter
         }
-        
-        currentFilter += filters.join(' and '); 
+
+        currentFilter += filters.join(' and ');
         currentBacklink += currentFilter;
       }
     }
@@ -150,18 +150,18 @@ export const SysdigVMRegistryFetchComponent = () => {
     const data = await sysdigApiClient.fetchVulnRegistry(filter);
     return data.data;
   }, [sysdigApiClient, filter, annotations]);
-  
+
   if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
 
   if (loading) {
     return <Progress />;
-  } 
-  
+  }
+
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-  
+
   return <DenseTable registryScans={value || []} title={getTitleWithBacklink("Registry Scan Overview", backlink) || []} />;
 };

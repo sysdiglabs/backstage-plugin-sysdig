@@ -127,17 +127,17 @@ export const SysdigVMPipelineFetchComponent = () => {
         currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
       } else {
         const filters: string[] = [];
-        
+
         if (SYSDIG_IMAGE_FREETEXT_ANNOTATION in annotations) {
           name = annotations[SYSDIG_IMAGE_FREETEXT_ANNOTATION];
           filters.push(`freeText in ("${name}")`);
         }
-        
+
         if (filters.length === 0) {
           return { filter: '', backlink: '' }; // No annotations, no filter
         }
-        
-        currentFilter += filters.join(' and '); 
+
+        currentFilter += filters.join(' and ');
         currentBacklink += currentFilter;
       }
     }
@@ -151,18 +151,18 @@ export const SysdigVMPipelineFetchComponent = () => {
     const data = await sysdigApiClient.fetchVulnPipeline(filter);
     return data.data;
   }, [sysdigApiClient, filter, annotations]);
-  
+
   if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
 
   if (loading) {
     return <Progress />;
-  } 
-  
+  }
+
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-  
+
   return <DenseTable pipelineScans={value || []} title={getTitleWithBacklink("Pipeline Scan Overview", backlink) || []}/>;
 };

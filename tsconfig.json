@@ -62,7 +62,7 @@
     "emitDeclarationOnly": true, // Optional: Only emit declaration files without compiling JavaScript
     "skipLibCheck": true, // Optional: Skips checking types of .d.ts files
     "moduleResolution": "node",
-    
+
     // "removeComments": true,                           /* Disable emitting comments. */
     "noEmit": false,                                   /* Disable emitting files from a compilation. */
     // "importHelpers": true,                            /* Allow importing helper functions from tslib once per project, instead of including them per-file. */

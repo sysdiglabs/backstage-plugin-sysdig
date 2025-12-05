@@ -23,30 +23,30 @@ import { sysdigApiRef } from '../../api';
 
 import {
   // annotations
-  SYSDIG_EXTERNALDNS_ANNOTATION, 
-  SYSDIG_DISTRIBUTION_ANNOTATION, 
-  SYSDIG_LABELS_ANNOTATION, 
-  SYSDIG_RESOURCE_NAME_ANNOTATION, 
-  SYSDIG_RESOURCE_ORIGIN_ANNOTATION, 
-  SYSDIG_RESOURCE_TYPE_ANNOTATION, 
-  SYSDIG_NODE_TYPE_ANNOTATION, 
-  SYSDIG_OS_NAME_ANNOTATION, 
-  SYSDIG_OS_IMAGE_ANNOTATION, 
-  SYSDIG_PLATFORM_ANNOTATION, 
-  SYSDIG_ACCOUNT_ANNOTATION, 
-  SYSDIG_ORGANIZATION_ANNOTATION, 
-  SYSDIG_PROJECT_ANNOTATION, 
-  SYSDIG_REGION_ANNOTATION, 
-  SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION, 
-  SYSDIG_VERSION_ANNOTATION, 
-  SYSDIG_ZONE_ANNOTATION, 
-  SYSDIG_CATEGORY_ANNOTATION, 
-  SYSDIG_INTEGRATION_NAME_ANNOTATION, 
-  SYSDIG_LOCATION_ANNOTATION, 
-  SYSDIG_REPOSITORY_ANNOTATION, 
-  SYSDIG_SOURCE_TYPE_ANNOTATION, 
-  SYSDIG_CLUSTER_NAME_ANNOTATION, 
-  SYSDIG_NAMESPACE_ANNOTATION, 
+  SYSDIG_EXTERNALDNS_ANNOTATION,
+  SYSDIG_DISTRIBUTION_ANNOTATION,
+  SYSDIG_LABELS_ANNOTATION,
+  SYSDIG_RESOURCE_NAME_ANNOTATION,
+  SYSDIG_RESOURCE_ORIGIN_ANNOTATION,
+  SYSDIG_RESOURCE_TYPE_ANNOTATION,
+  SYSDIG_NODE_TYPE_ANNOTATION,
+  SYSDIG_OS_NAME_ANNOTATION,
+  SYSDIG_OS_IMAGE_ANNOTATION,
+  SYSDIG_PLATFORM_ANNOTATION,
+  SYSDIG_ACCOUNT_ANNOTATION,
+  SYSDIG_ORGANIZATION_ANNOTATION,
+  SYSDIG_PROJECT_ANNOTATION,
+  SYSDIG_REGION_ANNOTATION,
+  SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION,
+  SYSDIG_VERSION_ANNOTATION,
+  SYSDIG_ZONE_ANNOTATION,
+  SYSDIG_CATEGORY_ANNOTATION,
+  SYSDIG_INTEGRATION_NAME_ANNOTATION,
+  SYSDIG_LOCATION_ANNOTATION,
+  SYSDIG_REPOSITORY_ANNOTATION,
+  SYSDIG_SOURCE_TYPE_ANNOTATION,
+  SYSDIG_CLUSTER_NAME_ANNOTATION,
+  SYSDIG_NAMESPACE_ANNOTATION,
   SYSDIG_CUSTOM_FILTER_ANNOTATION,
 
   // methods
@@ -231,127 +231,127 @@ export const SysdigPostureFetchComponent = () => {
           name = annotations[SYSDIG_EXTERNALDNS_ANNOTATION];
           filters.push(`externalDNS="${name}"`);
         }
-        
+
         if (SYSDIG_DISTRIBUTION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_DISTRIBUTION_ANNOTATION];
           filters.push(`distribution="${name}"`);
         }
-        
+
         if (SYSDIG_LABELS_ANNOTATION in annotations) {
           name = annotations[SYSDIG_LABELS_ANNOTATION];
           filters.push(`labels="${name}"`);
         }
-        
+
         if (SYSDIG_RESOURCE_NAME_ANNOTATION in annotations) {
           name = annotations[SYSDIG_RESOURCE_NAME_ANNOTATION];
           filters.push(`name="${name}"`);
         }
-        
+
         if (SYSDIG_RESOURCE_ORIGIN_ANNOTATION in annotations) {
           name = annotations[SYSDIG_RESOURCE_ORIGIN_ANNOTATION];
           filters.push(`resourceOrigin="${name}"`);
         }
-        
+
         if (SYSDIG_RESOURCE_TYPE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_RESOURCE_TYPE_ANNOTATION];
           filters.push(`type="${name}"`);
         }
-        
+
         if (SYSDIG_NODE_TYPE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_NODE_TYPE_ANNOTATION];
           filters.push(`nodeType="${name}"`);
         }
-        
+
         if (SYSDIG_OS_NAME_ANNOTATION in annotations) {
           name = annotations[SYSDIG_OS_NAME_ANNOTATION];
           filters.push(`osName="${name}"`);
         }
-        
+
         if (SYSDIG_OS_IMAGE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_OS_IMAGE_ANNOTATION];
           filters.push(`osImage="${name}"`);
         }
-        
+
         if (SYSDIG_PLATFORM_ANNOTATION in annotations) {
           name = annotations[SYSDIG_PLATFORM_ANNOTATION];
           filters.push(`platform="${name}"`);
         }
-        
+
         if (SYSDIG_ACCOUNT_ANNOTATION in annotations) {
           name = annotations[SYSDIG_ACCOUNT_ANNOTATION];
           filters.push(`account="${name}"`);
         }
-        
+
         if (SYSDIG_ORGANIZATION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_ORGANIZATION_ANNOTATION];
           filters.push(`organization="${name}"`);
         }
-        
+
         if (SYSDIG_PROJECT_ANNOTATION in annotations) {
           name = annotations[SYSDIG_PROJECT_ANNOTATION];
           filters.push(`project="${name}"`);
         }
-        
+
         if (SYSDIG_REGION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_REGION_ANNOTATION];
           filters.push(`region="${name}"`);
         }
-        
+
         if (SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_AZURE_SUBSCRIPTION_ANNOTATION];
           filters.push(`subscription="${name}"`);
         }
-        
+
         if (SYSDIG_VERSION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_VERSION_ANNOTATION];
           filters.push(`version="${name}"`);
         }
-        
+
         if (SYSDIG_ZONE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_ZONE_ANNOTATION];
           filters.push(`zone="${name}"`);
         }
-        
+
         if (SYSDIG_CATEGORY_ANNOTATION in annotations) {
           name = annotations[SYSDIG_CATEGORY_ANNOTATION];
           filters.push(`category="${name}"`);
         }
-        
+
         if (SYSDIG_INTEGRATION_NAME_ANNOTATION in annotations) {
           name = annotations[SYSDIG_INTEGRATION_NAME_ANNOTATION];
           filters.push(`integrationName="${name}"`);
         }
-        
+
         if (SYSDIG_LOCATION_ANNOTATION in annotations) {
           name = annotations[SYSDIG_LOCATION_ANNOTATION];
           filters.push(`location="${name}"`);
         }
-        
+
         if (SYSDIG_REPOSITORY_ANNOTATION in annotations) {
           name = annotations[SYSDIG_REPOSITORY_ANNOTATION];
           filters.push(`repository="${name}"`);
         }
-        
+
         if (SYSDIG_SOURCE_TYPE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_SOURCE_TYPE_ANNOTATION];
           filters.push(`sourceType="${name}"`);
-        }      
+        }
 
         if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
           name = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION];
           filters.push(`cluster="${name}"`);
         }
-        
+
         if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
           name = annotations[SYSDIG_NAMESPACE_ANNOTATION];
           filters.push(`namespace="${name}"`);
         }
-        
+
         if (filters.length === 0) {
           return { filter: '', backlink: '' }; // No annotations, no filter
         }
 
-        currentFilter += filters.join(' and '); 
+        currentFilter += filters.join(' and ');
         currentBacklink += currentFilter;
       }
     }
@@ -372,8 +372,8 @@ export const SysdigPostureFetchComponent = () => {
 
   if (loading) {
     return <Progress />;
-  } 
-  
+  }
+
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }

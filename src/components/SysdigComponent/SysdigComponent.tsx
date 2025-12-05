@@ -60,7 +60,7 @@ export const SysdigComponent = () => (
       </Grid>
       <hr/>
       <ContentHeader title="Posture Report" />
-      <Grid container spacing={3} direction="column">    
+      <Grid container spacing={3} direction="column">
         <Grid item>
           <SysdigPostureFetchComponent />
         </Grid>

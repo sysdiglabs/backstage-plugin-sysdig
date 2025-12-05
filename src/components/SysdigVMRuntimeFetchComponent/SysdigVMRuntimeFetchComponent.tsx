@@ -167,12 +167,12 @@ export const SysdigVMRuntimeFetchComponent = () => {
         currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
       } else {
         const filters: string[] = [];
-        
+
         if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
           names = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
           filters.push(`kubernetes.cluster.name in (${names})`);
         }
-        
+
         if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
           names = annotations[SYSDIG_NAMESPACE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
           filters.push(`kubernetes.namespace.name in (${names})`);
@@ -192,13 +192,13 @@ export const SysdigVMRuntimeFetchComponent = () => {
           names = annotations[SYSDIG_CONTAINER_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
           filters.push(`kubernetes.pod.container.name in (${names})`);
         }
-        
+
         if (filters.length === 0) {
           return { filter: '', backlink: '' }; // No annotations, no filter
         }
-        
-        currentFilter += filters.join(' and '); 
-        currentBacklink += currentFilter; 
+
+        currentFilter += filters.join(' and ');
+        currentBacklink += currentFilter;
       }
     }
     return { filter: currentFilter, backlink: currentBacklink };
@@ -211,7 +211,7 @@ export const SysdigVMRuntimeFetchComponent = () => {
     const data = await sysdigApiClient.fetchVulnRuntime(filter);
     return data.data;
   }, [sysdigApiClient, filter, annotations]);
-  
+
   if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
@@ -219,10 +219,10 @@ export const SysdigVMRuntimeFetchComponent = () => {
   if (loading) {
     return <Progress />;
   }
-  
+
   if (error) {
     return <Alert severity="error">{error.message}</Alert>;
   }
-  
+
   return <DenseTable runtimeScans={value || []} title={getTitleWithBacklink("Runtime Scan Overview", backlink) || []} />;
 };
