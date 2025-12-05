@@ -6,6 +6,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import Typography from '@material-ui/core/Typography';
 import { Gauge } from '@backstage/core-components';
 import OpenInNew from '@material-ui/icons/OpenInNew';
+
 const interleave = (arr: any, thing: any) => [].concat(...arr.map((n: any) => [n, thing])).slice(0, -1)
 
 const getStatusColorSpan = (status: string) => {
