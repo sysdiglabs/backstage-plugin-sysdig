@@ -2,7 +2,7 @@ import { SysdigApi } from '../src/api';
 
 export class MockSysdigClient implements SysdigApi {
   async fetchVulnRuntime<T = any>(filters?: string): Promise<T> {
-    console.log('Mock fetchVulnRuntime', filters);
+
     return {
       data: [
         {
@@ -68,7 +68,7 @@ export class MockSysdigClient implements SysdigApi {
   }
 
   async fetchVulnRegistry<T = any>(filters?: string): Promise<T> {
-    console.log('Mock fetchVulnRegistry', filters);
+
     return {
       data: [
         {
@@ -102,7 +102,7 @@ export class MockSysdigClient implements SysdigApi {
   }
 
   async fetchVulnPipeline<T = any>(filters?: string): Promise<T> {
-    console.log('Mock fetchVulnPipeline', filters);
+
     return {
       data: [
         {
@@ -138,7 +138,7 @@ export class MockSysdigClient implements SysdigApi {
   }
 
   async fetchInventory<T = any>(filters?: string): Promise<T> {
-    console.log('Mock fetchInventory', filters);
+
     return {
       data: [
         {
