@@ -2,9 +2,8 @@ import React from 'react';
 import { createDevApp } from '@backstage/dev-utils';
 import { sysdigPlugin, SysdigPage } from '../src/plugin';
 import { EntityProvider } from '@backstage/plugin-catalog-react';
-import { createApiFactory } from '@backstage/core-plugin-api';
-import { sysdigApiRef } from '../src/api';
-import { MockSysdigClient } from './MockSysdigClient';
+import { createApiFactory, configApiRef, fetchApiRef } from '@backstage/core-plugin-api';
+import { sysdigApiRef, SysdigApiClient } from '../src/api';
 
 const mockEntity = {
   apiVersion: 'backstage.io/v1alpha1',
@@ -34,9 +33,10 @@ createDevApp()
   .registerApi(
     createApiFactory({
       api: sysdigApiRef,
-      deps: {},
-      factory: () => new MockSysdigClient(),
-    })
+      deps: { configApi: configApiRef, fetchApi: fetchApiRef },
+      factory: ({ configApi, fetchApi }) =>
+        new SysdigApiClient({ configApi, fetchApi }),
+    }),
   )
   .registerPlugin(sysdigPlugin)
   .addPage({
