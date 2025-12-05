@@ -33,6 +33,35 @@ export class MockSysdigClient implements SysdigApi {
             medium: 1,
             negligible: 10
           }
+        },
+        {
+          isRiskSpotlightEnabled: false,
+          mainAssetName: "sock-shop-front-end",
+          policyEvaluationsResult: "failed",
+          resultId: "res-runtime-2",
+          runningVulnTotalBySeverity: {
+            critical: 1,
+            high: 2,
+            low: 3,
+            medium: 4,
+            negligible: 0
+          },
+          sbomId: "sbom-2",
+          scope: {
+            "asset.type": "container",
+            "kubernetes.cluster.name": "sock-shop-cluster",
+            "kubernetes.namespace.name": "sock-shop",
+            "kubernetes.pod.container.name": "front-end",
+            "kubernetes.workload.name": "sock-shop-front-end",
+            "kubernetes.workload.type": "deployment"
+          },
+          vulnTotalBySeverity: {
+            critical: 1,
+            high: 5,
+            low: 8,
+            medium: 2,
+            negligible: 3
+          }
         }
       ]
     } as any;
@@ -52,6 +81,19 @@ export class MockSysdigClient implements SysdigApi {
             high: 3,
             low: 0,
             medium: 2,
+            negligible: 0
+          }
+        },
+        {
+          createdAt: "2023-11-01T12:00:00Z",
+          imageId: "sha256:fedcba987654",
+          mainAssetName: "library/ubuntu",
+          resultId: "res-registry-2",
+          vulnTotalBySeverity: {
+            critical: 0,
+            high: 1,
+            low: 2,
+            medium: 0,
             negligible: 0
           }
         }
@@ -75,6 +117,20 @@ export class MockSysdigClient implements SysdigApi {
             low: 1,
             medium: 0,
             negligible: 5
+          }
+        },
+        {
+          createdAt: "2023-11-02T09:30:00Z",
+          imageId: "sha256:987654321fed",
+          mainAssetName: "docker.io/library/alpine",
+          policyEvaluationsResult: "failed",
+          resultId: "res-pipeline-2",
+          vulnTotalBySeverity: {
+            critical: 0,
+            high: 0,
+            low: 0,
+            medium: 3,
+            negligible: 1
           }
         }
       ]
@@ -121,6 +177,54 @@ export class MockSysdigClient implements SysdigApi {
                 id: "15",
                 name: "CIS Amazon Web Services Foundations Benchmark",
                 pass: false
+              }
+            ]
+          },
+          resourceOrigin: "Deployed",
+          type: "Deployment",
+          zones: [
+            {
+              id: "1",
+              name: "Entire Infrastructure"
+            }
+          ]
+        },
+        {
+          configuration: "metadata: annotations: ...",
+          id: "inv-2",
+          keyValueConfigs: [
+            {
+              groupName: "Kubernetes",
+              values: {
+                key: "Kubelet --read-only-port",
+                value: "0"
+              }
+            }
+          ],
+          labels: ["app.kubernetes.io/component:payment"],
+          lastSeen: "1660742138",
+          metadata: {
+            Account: "123456789012",
+            Organization: "Sysdig",
+            Region: "us-east-1"
+          },
+          name: "sock-shop-payments",
+          platform: "AWS",
+          postureControlSummary: [
+            {
+              acceptedControls: 10,
+              failedControls: 0,
+              name: "CIS Amazon Web Services Foundations Benchmark",
+              policyId: "15"
+            }
+          ],
+          posturePolicySummary: {
+            passPercentage: 100,
+            policies: [
+              {
+                id: "15",
+                name: "CIS Amazon Web Services Foundations Benchmark",
+                pass: true
               }
             ]
           },
