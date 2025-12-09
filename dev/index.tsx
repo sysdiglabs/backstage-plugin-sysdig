@@ -11,15 +11,17 @@ const mockEntity = {
   metadata: {
     name: 'sock-shop-carts',
     annotations: {
-      'sysdigcloud.com/kubernetes-cluster-name': 'sock-shop-cluster',
-      'sysdigcloud.com/kubernetes-namespace-name': 'sock-shop',
-      'sysdigcloud.com/kubernetes-workload-name': 'sock-shop-carts',
-      'sysdigcloud.com/kubernetes-workload-type': 'deployment',
-      'sysdigcloud.com/registry-vendor': 'harbor',
-      'sysdigcloud.com/registry-name': 'registry-harbor-registry.registry.svc.cluster.local:5443',
-      'sysdigcloud.com/image-freetext': 'ghcr.io/sysdiglabs',
-      'sysdigcloud.com/resource-name': 'sock-shop-carts',
-      'sysdigcloud.com/resource-type': 'Deployment',
+      // Un-comment to see different results in the UI
+      //
+      // 'sysdigcloud.com/kubernetes-cluster-name': 'sock-shop-cluster',
+      // 'sysdigcloud.com/kubernetes-namespace-name': 'sock-shop',
+      // 'sysdigcloud.com/kubernetes-workload-name': 'sock-shop-carts',
+      // 'sysdigcloud.com/kubernetes-workload-type': 'deployment',
+      // 'sysdigcloud.com/registry-vendor': 'harbor',
+      // 'sysdigcloud.com/registry-name': 'registry-harbor-registry.registry.svc.cluster.local:5443',
+      // 'sysdigcloud.com/image-freetext': 'ghcr.io/sysdiglabs',
+      // 'sysdigcloud.com/resource-name': 'sock-shop-carts',
+      // 'sysdigcloud.com/resource-type': 'Deployment',
     },
   },
   spec: {
