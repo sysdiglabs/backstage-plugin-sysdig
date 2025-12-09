@@ -11,11 +11,11 @@ repos:
     hooks:
       - id: lint
         name: run linter
-        entry: yarn lint
+        entry: just lint
         language: system
         pass_filenames: false
       - id: test
         name: run tests
-        entry: yarn test --watchAll=false
+        entry: just test
         language: system
         pass_filenames: false
