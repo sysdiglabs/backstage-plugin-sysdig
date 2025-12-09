@@ -38,3 +38,7 @@ bump:
 # Checks for unused dependencies
 check-unused:
     npx -y depcheck
+
+# Checks for vulnerabilities
+audit: install
+    yarn npm audit
