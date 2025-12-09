@@ -17,18 +17,18 @@ This repository contains the **Sysdig Plugin for Backstage**, a frontend plugin 
 **Package Manager:** Yarn.
 
 ## Build, Test, & Development
-- **`yarn install`**: Install dependencies.
-- **`yarn start`**: Starts the local development server at `http://localhost:3000`. Uses `dev/index.tsx` for context. If address is still in use use `fuser -k 3000/tcp`.
-- **`yarn test`**: Runs unit tests using Jest. Use `yarn test --watchAll=false` to run tests once without watch mode.
-- **`yarn lint`**: Runs ESLint to check code quality.
-- **`yarn build`**: Builds the plugin for distribution.
+- **`just install`**: Install dependencies.
+- **`just start`**: Starts the local development server at `http://localhost:3000`. Uses `dev/index.tsx` for context. If address is still in use use `fuser -k 3000/tcp`.
+- **`just test`**: Runs unit tests using Jest.
+- **`just lint`**: Runs ESLint to check code quality.
+- **`just build`**: Builds the plugin for distribution.
 - **`just bump`**: Updates dependencies (requires Nix/Just).
 
 ## Onboarding & Known Issues
 **Crucial setup details for new contributors:**
-1. **Package Manager**: Strictly use **Yarn**. This repo may contain a misleading `package-lock.json`; ignore it.
-2. **Dev Dependencies**: If `yarn start` fails, ensure `react`, `react-dom`, and `react-router-dom` (v6) are explicitly in `devDependencies`.
-3. **Configuration**: `app-config.yaml` is not committed but required for `yarn start`. Create it with standard proxy settings if missing.
+1. **Package Manager**: Strictly use **Yarn** (wrapped via `just`).
+2. **Dev Dependencies**: If `just start` fails, ensure `react`, `react-dom`, and `react-router-dom` (v6) are explicitly in `devDependencies`.
+3. **Configuration**: `app-config.yaml` is not committed but required for `just start`. Create it with standard proxy settings if missing.
 4. **Entity Context**: The plugin crashes if run in isolation because it uses `useEntity`. The `dev/index.tsx` **must** wrap `SysdigPage` in an `<EntityProvider>` with a valid mock entity object.
 5. **Data & Auth**: Without `SYSDIG_SECURE_TOKEN`, requests fail. For UI work, override `sysdigApiRef` with a **Mock Client** in `dev/index.tsx` (see `dev/MockSysdigClient.ts`).
 
@@ -52,7 +52,7 @@ This repository contains the **Sysdig Plugin for Backstage**, a frontend plugin 
 - **Pull Requests**:
   - Title must match the commit format.
   - Include screenshots for UI changes.
-  - Ensure `yarn test` and `yarn lint` pass before requesting review.
+  - Ensure `just test` and `just lint` pass before requesting review.
 
 ## Release Process
 The release process is semi-automated:

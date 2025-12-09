@@ -28,6 +28,7 @@
               packages = [
                 gh
                 jq
+                just
                 nodejs
                 pre-commit
                 typescript
