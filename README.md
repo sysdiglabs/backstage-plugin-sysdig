@@ -22,7 +22,7 @@ Please refer to the [official documentation](https://docs.sysdig.com/en/docs/adm
 
 ### Install the package
 
-#### Via NPM
+#### Via Yarn
 
 ```bash
 # From your Backstage root directory
