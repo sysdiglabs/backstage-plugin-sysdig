@@ -26,7 +26,7 @@ build: install lint test
     yarn build
 
 # Cleans the package
-clean:
+clean: install
     yarn clean
 
 # Bumps dependencies
