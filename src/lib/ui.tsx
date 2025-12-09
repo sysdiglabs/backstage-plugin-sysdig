@@ -1,11 +1,11 @@
 import React from 'react';
-import Chip from '@material-ui/core/Chip';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import InfoIcon from '@material-ui/icons/Info';
-import Typography from '@material-ui/core/Typography';
+import Chip from '@mui/material/Chip';
+import Tooltip from '@mui/material/Tooltip';
+import IconButton from '@mui/material/IconButton';
+import InfoIcon from '@mui/icons-material/Info';
+import Typography from '@mui/material/Typography';
 import { Gauge } from '@backstage/core-components';
-import OpenInNew from '@material-ui/icons/OpenInNew';
+import OpenInNew from '@mui/icons-material/OpenInNew';
 
 const interleave = (arr: any, thing: any) => [].concat(...arr.map((n: any) => [n, thing])).slice(0, -1)
 
@@ -79,7 +79,7 @@ function getDetails(scan: any) {
         </div>
       }
     >
-      <IconButton aria-label="delete">
+      <IconButton aria-label="delete" size="large">
         <InfoIcon />
       </IconButton>
     </Tooltip>

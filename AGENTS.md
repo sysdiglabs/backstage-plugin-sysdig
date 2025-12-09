@@ -31,11 +31,12 @@ This repository contains the **Sysdig Plugin for Backstage**, a frontend plugin 
 3. **Configuration**: `app-config.yaml` is not committed but required for `just start`. Create it with standard proxy settings if missing.
 4. **Entity Context**: The plugin crashes if run in isolation because it uses `useEntity`. The `dev/index.tsx` **must** wrap `SysdigPage` in an `<EntityProvider>` with a valid mock entity object.
 5. **Data & Auth**: Without `SYSDIG_SECURE_TOKEN`, requests fail. For UI work, override `sysdigApiRef` with a **Mock Client** in `dev/index.tsx` (see `dev/MockSysdigClient.ts`).
+6. **Test Execution**: `yarn test` defaults to watch mode and will hang indefinitely. **Always use `just test`** (or `yarn test --watchAll=false`) for a single-run execution.
 
 ## Coding Style & Naming
 - **Language**: TypeScript (`.ts`, `.tsx`). Strict mode enabled.
 - **Components**: Functional components with Hooks (`useEntity`, `useAsync`, `useApi`).
-- **Styling**: Use Material UI (`@material-ui/core`) and Backstage core components (`@backstage/core-components`).
+- **Styling**: Use Material UI (`@mui/material`) and Backstage core components (`@backstage/core-components`).
 - **Naming**: PascalCase for components (`SysdigComponent`), camelCase for functions/vars.
 - **Imports**: Prefer relative imports within `src/` but use strict package imports for external deps.
 
