@@ -27,6 +27,17 @@ const mockEntity = {
   kind: 'Component',
   metadata: {
     name: 'test-component',
+    annotations: {
+      'sysdigcloud.com/image-freetext': 'ghcr.io/sysdiglabs',
+    },
+  },
+};
+
+const mockEntityWithoutAnnotations = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: {
+    name: 'test-component',
     annotations: {},
   },
 };
@@ -49,7 +60,7 @@ const mockConfig = new ConfigReader({
 });
 
 describe('SysdigVMPipelineFetchComponent', () => {
-  it('renders the user table', async () => {
+  it('renders the pipeline table with annotations', async () => {
     await renderInTestApp(
       <TestApiProvider apis={[
         [sysdigApiRef, mockSysdigApi],
@@ -64,5 +75,22 @@ describe('SysdigVMPipelineFetchComponent', () => {
     // Wait for the table to render
     const table = await screen.findByText('Pipeline Scan Overview');
     expect(table).toBeInTheDocument();
+  });
+
+  it('renders missing annotation state when annotations are missing', async () => {
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, mockSysdigApi],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntityWithoutAnnotations}>
+          <SysdigVMPipelineFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    // Wait for the missing annotation message to render
+    const message = await screen.findByText(/missing annotation/i);
+    expect(message).toBeInTheDocument();
   });
 });
