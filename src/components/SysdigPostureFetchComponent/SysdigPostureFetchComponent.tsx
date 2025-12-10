@@ -17,7 +17,7 @@ import React from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
 import Alert from '@mui/material/Alert';
-import { useEntity } from '@backstage/plugin-catalog-react';
+import { useEntity, MissingAnnotationEmptyState } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import { sysdigApiRef } from '../../api';
 
@@ -216,14 +216,16 @@ export const SysdigPostureFetchComponent = () => {
 
   const annotations = entity.metadata.annotations;
 
-  const { filter, backlink } = React.useMemo(() => {
+  const { filter, backlink, hasSysdigAnnotations } = React.useMemo(() => {
     let currentFilter = '?filter=';
     let currentBacklink = getBacklink(endpoint, backlink_config, "inventory");
     let name: string | undefined;
+    let hasAnnotations = false;
 
     if (annotations) {
       if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
         currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
+        hasAnnotations = true;
       } else {
         const filters: string[] = [];
 
@@ -348,26 +350,39 @@ export const SysdigPostureFetchComponent = () => {
         }
 
         if (filters.length === 0) {
-          return { filter: '', backlink: '' }; // No annotations, no filter
+          return { filter: '', backlink: '', hasSysdigAnnotations: false }; // No Sysdig annotations
         }
 
+        hasAnnotations = true;
         currentFilter += filters.join(' and ');
         currentBacklink += currentFilter;
       }
     }
-    return { filter: currentFilter, backlink: currentBacklink };
+    return { filter: currentFilter, backlink: currentBacklink, hasSysdigAnnotations: hasAnnotations };
   }, [annotations, endpoint, backlink_config]);
 
   const { value, loading, error } = useAsync(async (): Promise<PostureScan[]> => {
-    if (!annotations) {
-      return []; // No annotations, so no data to fetch
+    if (!hasSysdigAnnotations) {
+      return []; // No Sysdig annotations, so no data to fetch
     }
     const data = await sysdigApiClient.fetchInventory(filter);
     return data.data;
-  }, [sysdigApiClient, filter, annotations]); // Depend on filter and annotations
+  }, [sysdigApiClient, filter, hasSysdigAnnotations]);
 
-  if (!annotations) {
-    return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
+  if (!hasSysdigAnnotations) {
+    return (
+      <MissingAnnotationEmptyState
+        annotation={[
+          SYSDIG_RESOURCE_NAME_ANNOTATION,
+          SYSDIG_RESOURCE_TYPE_ANNOTATION,
+          SYSDIG_PLATFORM_ANNOTATION,
+          SYSDIG_ACCOUNT_ANNOTATION,
+          SYSDIG_REGION_ANNOTATION,
+          SYSDIG_CUSTOM_FILTER_ANNOTATION
+        ]}
+        readMoreUrl="https://github.com/sysdiglabs/backstage-plugin-sysdig#how-to-annotate-services"
+      />
+    );
   }
 
   if (loading) {

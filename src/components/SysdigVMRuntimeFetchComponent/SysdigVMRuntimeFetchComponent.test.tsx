@@ -27,6 +27,18 @@ const mockEntity = {
   kind: 'Component',
   metadata: {
     name: 'test-component',
+    annotations: {
+      'sysdigcloud.com/kubernetes-cluster-name': 'test-cluster',
+      'sysdigcloud.com/kubernetes-namespace-name': 'test-namespace',
+    },
+  },
+};
+
+const mockEntityWithoutAnnotations = {
+  apiVersion: 'backstage.io/v1alpha1',
+  kind: 'Component',
+  metadata: {
+    name: 'test-component',
     annotations: {},
   },
 };
@@ -49,7 +61,7 @@ const mockConfig = new ConfigReader({
 });
 
 describe('SysdigVMRuntimeFetchComponent', () => {
-  it('renders the user table', async () => {
+  it('renders the runtime table with annotations', async () => {
     await renderInTestApp(
       <TestApiProvider apis={[
         [sysdigApiRef, mockSysdigApi],
@@ -64,5 +76,22 @@ describe('SysdigVMRuntimeFetchComponent', () => {
     // Wait for the table to render
     const table = await screen.findByText('Runtime Scan Overview');
     expect(table).toBeInTheDocument();
+  });
+
+  it('renders missing annotation state when annotations are missing', async () => {
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, mockSysdigApi],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntityWithoutAnnotations}>
+          <SysdigVMRuntimeFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    // Wait for the missing annotation message to render
+    const message = await screen.findByText(/missing annotation/i);
+    expect(message).toBeInTheDocument();
   });
 });
