@@ -1,0 +1,23 @@
+app:
+  title: Sysdig Plugin Dev
+  baseUrl: http://localhost:3000
+
+backend:
+  baseUrl: http://localhost:7007
+  listen:
+    port: 7007
+
+proxy:
+  endpoints:
+    '/sysdig':
+      target: ${SYSDIG_SECURE_ENDPOINT}
+      changeOrigin: true
+      allowedMethods: ['GET']
+      headers:
+        "Authorization": "Bearer ${SYSDIG_SECURE_TOKEN}"
+        "Content-Type": "application/json"
+        "Accept": "application/json"
+        "X-Sysdig-Product": "SDS"
+
+sysdig:
+  endpoint: ${SYSDIG_SECURE_ENDPOINT}

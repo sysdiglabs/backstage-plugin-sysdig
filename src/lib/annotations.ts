@@ -1,7 +1,7 @@
 /* Sysdig Annotations for Components */
 
 
-/********************************* Inventory *********************************/
+/* ********************************* Inventory ********************************* */
 
 /*
  * Inventory
@@ -78,7 +78,7 @@ export const SYSDIG_REPOSITORY_ANNOTATION = "sysdigcloud.com/iac-repository";
 export const SYSDIG_SOURCE_TYPE_ANNOTATION = "sysdigcloud.com/source-type";
 
 
-/********************************* Vuln Management *********************************/
+/* ********************************* Vuln Management ********************************* */
 /*
  * Runtime
  */
@@ -121,6 +121,6 @@ export const SYSDIG_REGISTRY_REPOSITORY_ANNOTATION = "sysdigcloud.com/registry-r
 // Examples: "sysdig-cli-scanner:1.6.1", "ghcr.io/sysdiglabs/sysdig-cli-scanner", "ghcr.io/sysdiglabs"
 export const SYSDIG_IMAGE_FREETEXT_ANNOTATION = "sysdigcloud.com/image-freetext";
 
-/********************************* Custom *********************************/
+/* ********************************* Custom ********************************* */
 // Free Sysdig filtering syntax. Overrides any other Sysdig annotation value!
 export const SYSDIG_CUSTOM_FILTER_ANNOTATION = "sysdigcloud.com/custom-filter";

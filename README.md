@@ -22,7 +22,7 @@ Please refer to the [official documentation](https://docs.sysdig.com/en/docs/adm
 
 ### Install the package
 
-#### Via NPM
+#### Via Yarn
 
 ```bash
 # From your Backstage root directory
@@ -115,7 +115,7 @@ metadata:
 
     # VM Pipeline
     sysdigcloud.com/image-freetext: ghcr.io/sysdiglabs
-    
+
     # Posture
     sysdigcloud.com/resource-name: sock-shop-carts
     sysdigcloud.com/resource-type: "Deployment"

@@ -16,7 +16,7 @@
 import React from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 
@@ -120,7 +120,7 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 //    { title: 'URL', field: "url", width: "10%"  },
   ];
 
-  const data = runtimeScans.filter(scan => { return scan.policyEvaluationsResult != null && scan.policyEvaluationsResult != '' })
+  const data = runtimeScans.filter(scan => { return scan.policyEvaluationsResult !== null && scan.policyEvaluationsResult !== '' })
     .flatMap(scan => {
     return {
       policyEvalStatus: getStatusColorSpan(scan.policyEvaluationsResult),
@@ -151,72 +151,78 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 
 export const SysdigVMRuntimeFetchComponent = () => {
   const { entity } = useEntity();
-  const sysdigApiClient = useApi(sysdigApiRef)
-  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
-  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
+  const sysdigApiClient = useApi(sysdigApiRef);
+  const endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  const backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
-  var backlink = getBacklink(endpoint, backlink_config, "vm-runtime");
-  
-
-  let filter = '?filter=';
-  var names;
-  
   const annotations = entity.metadata.annotations;
-  if (annotations) {
 
-    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-    } else {
+  const { filter, backlink } = React.useMemo(() => {
+    let currentFilter = '?filter=';
+    let currentBacklink = getBacklink(endpoint, backlink_config, "vm-runtime");
+    let names: string | undefined;
 
-      var filters = []
-      
-      if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
-        names = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
-        filters.push(`kubernetes.cluster.name in (${names})`);
-      }
-      
-      if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
-        names = annotations[SYSDIG_NAMESPACE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
-        filters.push(`kubernetes.namespace.name in (${names})`);
-      }
+    if (annotations) {
+      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+        currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
+      } else {
+        const filters: string[] = [];
 
-      if (SYSDIG_WORKLOAD_ANNOTATION in annotations) {
-        names = annotations[SYSDIG_WORKLOAD_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
-        filters.push(`kubernetes.workload.name in (${names})`);
-      }
+        if (SYSDIG_CLUSTER_NAME_ANNOTATION in annotations) {
+          names = annotations[SYSDIG_CLUSTER_NAME_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+          filters.push(`kubernetes.cluster.name in (${names})`);
+        }
 
-      if (SYSDIG_WORKLOAD_TYPE_ANNOTATION in annotations) {
-        names = annotations[SYSDIG_WORKLOAD_TYPE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
-        filters.push(`kubernetes.workload.type in (${names})`);
-      }
+        if (SYSDIG_NAMESPACE_ANNOTATION in annotations) {
+          names = annotations[SYSDIG_NAMESPACE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+          filters.push(`kubernetes.namespace.name in (${names})`);
+        }
 
-      if (SYSDIG_CONTAINER_ANNOTATION in annotations) {
-        names = annotations[SYSDIG_CONTAINER_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
-        filters.push(`kubernetes.pod.container.name in (${names})`);
+        if (SYSDIG_WORKLOAD_ANNOTATION in annotations) {
+          names = annotations[SYSDIG_WORKLOAD_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+          filters.push(`kubernetes.workload.name in (${names})`);
+        }
+
+        if (SYSDIG_WORKLOAD_TYPE_ANNOTATION in annotations) {
+          names = annotations[SYSDIG_WORKLOAD_TYPE_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+          filters.push(`kubernetes.workload.type in (${names})`);
+        }
+
+        if (SYSDIG_CONTAINER_ANNOTATION in annotations) {
+          names = annotations[SYSDIG_CONTAINER_ANNOTATION].split(',').map(w => `"${w.trim()}"`).join(', ');
+          filters.push(`kubernetes.pod.container.name in (${names})`);
+        }
+
+        if (filters.length === 0) {
+          return { filter: '', backlink: '' }; // No annotations, no filter
+        }
+
+        currentFilter += filters.join(' and ');
+        currentBacklink += currentFilter;
       }
-      
-      if (filters.length == 0) {
-        return []
-      }
-      
-      filter += filters.join(' and '); 
-      backlink += filter; 
     }
+    return { filter: currentFilter, backlink: currentBacklink };
+  }, [annotations, endpoint, backlink_config]);
 
-    const { value, loading, error } = useAsync(async (): Promise<RuntimeScan[]> => {
-      const data = await sysdigApiClient.fetchVulnRuntime(filter)
-      return data.data;
-    }, []);
-  
-    if (loading) {
-      return <Progress />;
-    } else if (error) {
-      return <Alert severity="error">{error.message}</Alert>;
+  const { value, loading, error } = useAsync(async (): Promise<RuntimeScan[]> => {
+    if (!annotations) {
+      return []; // No annotations, so no data to fetch
     }
-  
-    return <DenseTable runtimeScans={value || []} title={getTitleWithBacklink("Runtime Scan Overview", backlink) || []} />;
-  } else {
+    const data = await sysdigApiClient.fetchVulnRuntime(filter);
+    return data.data;
+  }, [sysdigApiClient, filter, annotations]);
+
+  if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
-};
 
+  if (loading) {
+    return <Progress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error.message}</Alert>;
+  }
+
+  return <DenseTable runtimeScans={value || []} title={getTitleWithBacklink("Runtime Scan Overview", backlink) || []} />;
+};

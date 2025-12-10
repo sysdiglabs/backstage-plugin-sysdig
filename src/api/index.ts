@@ -1,2 +1,2 @@
-export * from "./SysdigApi";
-export * from "./SysdigApiClient";
+export * from "../app/ports/SysdigApi";
+export * from "../infra/api/SysdigApiClient";

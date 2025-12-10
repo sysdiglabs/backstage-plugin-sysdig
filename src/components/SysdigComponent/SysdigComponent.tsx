@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import Grid from '@mui/material/Grid';
 import {
   Header,
   Page,
@@ -28,7 +28,7 @@ import { SysdigVMPipelineFetchComponent } from '../SysdigVMPipelineFetchComponen
 import { SysdigPostureFetchComponent } from '../SysdigPostureFetchComponent';
 
 
-let support = {
+const support = {
   title: 'GitHub',
   icon: 'github',
   links: [
@@ -42,7 +42,7 @@ let support = {
 
 export const SysdigComponent = () => (
   <Page themeId="tool">
-    <Header title="Sysdig Security Report" subtitle="Pipeline, Registry & Runtime information"></Header>
+    <Header title="Sysdig Security Report" subtitle="Pipeline, Registry & Runtime information" />
     <Content>
       <ContentHeader title="Vulnerabilities Report">
         <SupportButton items={[support]}>This is the official Sysdig plugin for Backstage.</SupportButton>
@@ -59,8 +59,8 @@ export const SysdigComponent = () => (
         </Grid>
       </Grid>
       <hr/>
-      <ContentHeader title="Posture Report"></ContentHeader>
-      <Grid container spacing={3} direction="column">    
+      <ContentHeader title="Posture Report" />
+      <Grid container spacing={3} direction="column">
         <Grid item>
           <SysdigPostureFetchComponent />
         </Grid>

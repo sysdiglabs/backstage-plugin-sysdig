@@ -16,7 +16,7 @@
 import React from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import {
@@ -82,7 +82,7 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 //    { title: 'URL', field: "url", width: "10%"  },
   ];
 
-  const data = pipelineScans.filter(scan => { return scan.policyEvaluationsResult != null && scan.policyEvaluationsResult != '' })
+  const data = pipelineScans.filter(scan => { return scan.policyEvaluationsResult !== null && scan.policyEvaluationsResult !== '' })
     .flatMap(scan => {
     return {
       policyEvalStatus: getStatusColorSpan(scan.policyEvaluationsResult),
@@ -112,49 +112,57 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 export const SysdigVMPipelineFetchComponent = () => {
   const { entity } = useEntity();
   const sysdigApiClient = useApi(sysdigApiRef)
-  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
-  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
+  const endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  const backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
-  var backlink = getBacklink(endpoint, backlink_config, "vm-pipeline");
-  
-  let filter = '?filter=';
-  var name;
-  
   const annotations = entity.metadata.annotations;
-  if (annotations) {
-    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-    } else {
 
-      var filters = []
-      
-      if (SYSDIG_IMAGE_FREETEXT_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_IMAGE_FREETEXT_ANNOTATION]
-        filters.push('freeText in ("' + name + '")');
+  const { filter, backlink } = React.useMemo(() => {
+    let currentFilter = '?filter=';
+    let currentBacklink = getBacklink(endpoint, backlink_config, "vm-pipeline");
+    let name: string | undefined;
+
+    if (annotations) {
+      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+        currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
+      } else {
+        const filters: string[] = [];
+
+        if (SYSDIG_IMAGE_FREETEXT_ANNOTATION in annotations) {
+          name = annotations[SYSDIG_IMAGE_FREETEXT_ANNOTATION];
+          filters.push(`freeText in ("${name}")`);
+        }
+
+        if (filters.length === 0) {
+          return { filter: '', backlink: '' }; // No annotations, no filter
+        }
+
+        currentFilter += filters.join(' and ');
+        currentBacklink += currentFilter;
       }
-      
-      if (filters.length == 0) {
-        return []
-      }
-      
-      filter += filters.join(' and '); 
-      backlink += filter;
     }
+    return { filter: currentFilter, backlink: currentBacklink };
+  }, [annotations, endpoint, backlink_config]);
 
-    const { value, loading, error } = useAsync(async (): Promise<PipelineScan[]> => {
-      const data = await sysdigApiClient.fetchVulnPipeline(filter)
-      return data.data;
-    }, []);
-  
-    if (loading) {
-      return <Progress />;
-    } else if (error) {
-      return <Alert severity="error">{error.message}</Alert>;
+  const { value, loading, error } = useAsync(async (): Promise<PipelineScan[]> => {
+    if (!annotations) {
+      return []; // No annotations, so no data to fetch
     }
-  
-    return <DenseTable pipelineScans={value || []} title={getTitleWithBacklink("Pipeline Scan Overview", backlink) || []}/>;
+    const data = await sysdigApiClient.fetchVulnPipeline(filter);
+    return data.data;
+  }, [sysdigApiClient, filter, annotations]);
 
-  } else {
+  if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
+
+  if (loading) {
+    return <Progress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error.message}</Alert>;
+  }
+
+  return <DenseTable pipelineScans={value || []} title={getTitleWithBacklink("Pipeline Scan Overview", backlink) || []}/>;
 };

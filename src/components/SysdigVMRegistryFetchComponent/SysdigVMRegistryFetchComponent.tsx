@@ -16,7 +16,7 @@
 import React from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
-import Alert from '@material-ui/lab/Alert';
+import Alert from '@mui/material/Alert';
 import { useEntity } from '@backstage/plugin-catalog-react';
 import { useApi, configApiRef } from '@backstage/core-plugin-api';
 import {
@@ -77,7 +77,7 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
     { title: 'Severity', field: 'severity', width: "30%"  },
   ];
 
-  const data = registryScans.filter(scan => { return scan.imageId != '' })
+  const data = registryScans.filter(scan => { return scan.imageId !== '' })
     .flatMap(scan => {
     return {
       imageId: <code>{scan.imageId}</code>,
@@ -101,58 +101,67 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
 export const SysdigVMRegistryFetchComponent = () => {
   const { entity } = useEntity();
   const sysdigApiClient = useApi(sysdigApiRef)
-  let endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
-  let backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
-
-  var backlink = getBacklink(endpoint, backlink_config, "vm-registry");
-
-  let filter = '?filter=';
-  var name;
+  const endpoint: string | undefined = useApi(configApiRef).getOptionalString("sysdig.endpoint");
+  const backlink_config: string | undefined = useApi(configApiRef).getOptionalString("sysdig.backlink");
 
   const annotations = entity.metadata.annotations;
-  if (annotations) {
-    if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
-      filter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION]
-    } else {
 
-      var filters = []
-      
-      if (SYSDIG_REGISTRY_NAME_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_REGISTRY_NAME_ANNOTATION]
-        filters.push('registry.name="' + name + '"');
-      }
-      
-      if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION]
-        filters.push('registry.vendor="' + name + '"');
-      }
+  const { filter, backlink } = React.useMemo(() => {
+    let currentFilter = '?filter=';
+    let currentBacklink = getBacklink(endpoint, backlink_config, "vm-registry");
+    let name: string | undefined;
 
-      if (SYSDIG_REGISTRY_REPOSITORY_ANNOTATION in annotations) {
-        name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION]
-        filters.push('repository.name="' + name + '"');
+    if (annotations) {
+      if (SYSDIG_CUSTOM_FILTER_ANNOTATION in annotations) {
+        currentFilter += annotations[SYSDIG_CUSTOM_FILTER_ANNOTATION];
+      } else {
+        const filters: string[] = [];
+
+        if (SYSDIG_REGISTRY_NAME_ANNOTATION in annotations) {
+          name = annotations[SYSDIG_REGISTRY_NAME_ANNOTATION];
+          filters.push(`registry.name="${name}"`);
+        }
+
+        if (SYSDIG_REGISTRY_VENDOR_ANNOTATION in annotations) {
+          name = annotations[SYSDIG_REGISTRY_VENDOR_ANNOTATION];
+          filters.push(`registry.vendor="${name}"`);
+        }
+
+        if (SYSDIG_REGISTRY_REPOSITORY_ANNOTATION in annotations) {
+          name = annotations[SYSDIG_REGISTRY_REPOSITORY_ANNOTATION];
+          filters.push(`repository.name="${name}"`);
+        }
+
+        if (filters.length === 0) {
+          return { filter: '', backlink: '' }; // No annotations, no filter
+        }
+
+        currentFilter += filters.join(' and ');
+        currentBacklink += currentFilter;
       }
-      
-      if (filters.length == 0) {
-        return []
-      }
-      
-      filter += filters.join(' and '); 
-      backlink += filter;
     }
+    return { filter: currentFilter, backlink: currentBacklink };
+  }, [annotations, endpoint, backlink_config]);
 
-    const { value, loading, error } = useAsync(async (): Promise<RegistryScan[]> => {
-      const data = await sysdigApiClient.fetchVulnRegistry(filter)
-      return data.data;
-    }, []);
-  
-    if (loading) {
-      return <Progress />;
-    } else if (error) {
-      return <Alert severity="error">{error.message}</Alert>;
+  const { value, loading, error } = useAsync(async (): Promise<RegistryScan[]> => {
+    if (!annotations) {
+      return []; // No annotations, so no data to fetch
     }
-    
-    return <DenseTable registryScans={value || []} title={getTitleWithBacklink("Registry Scan Overview", backlink) || []} />;
-  } else {
+    const data = await sysdigApiClient.fetchVulnRegistry(filter);
+    return data.data;
+  }, [sysdigApiClient, filter, annotations]);
+
+  if (!annotations) {
     return <Alert severity="warning">Please, add annotations to the entity.</Alert>;
   }
+
+  if (loading) {
+    return <Progress />;
+  }
+
+  if (error) {
+    return <Alert severity="error">{error.message}</Alert>;
+  }
+
+  return <DenseTable registryScans={value || []} title={getTitleWithBacklink("Registry Scan Overview", backlink) || []} />;
 };
