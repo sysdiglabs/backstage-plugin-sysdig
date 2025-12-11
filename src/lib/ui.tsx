@@ -1,4 +1,3 @@
-import React from 'react';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
@@ -91,7 +90,7 @@ function truncate(str: string, n: number){
 };
 
 function getFailed(failed: any) {
-  const result: React.JSX.Element[] = [];
+  const result: JSX.Element[] = [];
   for (const policy of failed.filter((f: { [x: string]: any; }) => !f.pass)) {
     result.push(<Chip size="small" label={truncate(policy.name,25)} style={{backgroundColor:'red'}} key={policy.name} />);
   }
@@ -99,7 +98,7 @@ function getFailed(failed: any) {
 }
 
 function getPassed(passed: any) {
-  const result: React.JSX.Element[] = [];
+  const result: JSX.Element[] = [];
   for (const policy of passed.filter((f: { [x: string]: any; }) => f.pass)) {
     result.push(<Chip size="small" label={truncate(policy.name,25)} style={{backgroundColor:'green'}} key={policy.name} />);
   }
