@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import React from 'react';
+import { useMemo } from 'react';
 import { Table, TableColumn, Progress } from '@backstage/core-components';
 import useAsync from 'react-use/lib/useAsync';
 import Alert from '@mui/material/Alert';
@@ -71,7 +71,7 @@ type RuntimeScan =   {
 
 type DenseTableProps = {
   runtimeScans: RuntimeScan[];
-  title: React.JSX.Element;
+  title: JSX.Element;
 };
 
 // Example image response from Sysdig scanning API
@@ -157,7 +157,7 @@ export const SysdigVMRuntimeFetchComponent = () => {
 
   const annotations = entity.metadata.annotations;
 
-  const { filter, backlink, hasSysdigAnnotations } = React.useMemo(() => {
+  const { filter, backlink, hasSysdigAnnotations } = useMemo(() => {
     let currentFilter = '?filter=';
     let currentBacklink = getBacklink(endpoint, backlink_config, "vm-runtime");
     let names: string | undefined;

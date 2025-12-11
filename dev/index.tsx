@@ -1,4 +1,3 @@
-import React from 'react';
 import { createDevApp } from '@backstage/dev-utils';
 import { sysdigPlugin, SysdigPage } from '../src/plugin';
 import { EntityProvider } from '@backstage/plugin-catalog-react';
