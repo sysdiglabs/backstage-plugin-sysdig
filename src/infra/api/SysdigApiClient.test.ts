@@ -4,7 +4,7 @@ import { ConfigApi, FetchApi } from "@backstage/core-plugin-api";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import { SysdigApiClient } from "./SysdigApiClient";
-import { API_PROXY_BASE_PATH, API_VULN_RUNTIME } from "../../lib";
+import { API_PROXY_BASE_PATH, API_VULN_RUNTIME, API_VULN_REGISTRY, API_VULN_PIPELINE } from "../../lib";
 
 describe("SysdigApiClient", () => {
   const configApi: ConfigApi = new ConfigReader({
@@ -45,5 +45,14 @@ describe("SysdigApiClient", () => {
       `http://localhost:7007${API_PROXY_BASE_PATH}${API_VULN_RUNTIME}${filters}`,
       undefined,
     );
+  });
+
+  it("should use v1 endpoint paths (not v1beta1)", () => {
+    expect(API_VULN_RUNTIME).toMatch(/\/v1\//);
+    expect(API_VULN_REGISTRY).toMatch(/\/v1\//);
+    expect(API_VULN_PIPELINE).toMatch(/\/v1\//);
+    expect(API_VULN_RUNTIME).not.toMatch(/v1beta1/);
+    expect(API_VULN_REGISTRY).not.toMatch(/v1beta1/);
+    expect(API_VULN_PIPELINE).not.toMatch(/v1beta1/);
   });
 });
