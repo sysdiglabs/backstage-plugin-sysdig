@@ -42,6 +42,13 @@ const mockEntityWithoutAnnotations = {
   },
 };
 
+const mockRegistryScanV1 = {
+  resultId: 'result-registry-456',
+  imageId: 'sha256:abc123def456',
+  pullString: 'harbor.example.com/library/nginx:1.25',
+  vulnTotalBySeverity: { critical: 0, high: 2, medium: 5, low: 1, negligible: 3 },
+};
+
 const mockSysdigApi = {
   fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [] }),
   fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [] }),
@@ -92,5 +99,25 @@ describe('SysdigVMRegistryFetchComponent', () => {
     // Wait for the missing annotation message to render
     const message = await screen.findByText(/missing annotation/i);
     expect(message).toBeInTheDocument();
+  });
+
+  it('renders rows using v1 pullString field (not mainAssetName)', async () => {
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [mockRegistryScanV1] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRegistryFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    expect(await screen.findByText('harbor.example.com/library/nginx:1.25')).toBeInTheDocument();
   });
 });

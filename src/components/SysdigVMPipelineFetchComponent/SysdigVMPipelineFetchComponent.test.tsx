@@ -41,6 +41,15 @@ const mockEntityWithoutAnnotations = {
   },
 };
 
+const mockPipelineScanV1 = {
+  resultId: 'result-pipeline-123',
+  imageId: 'sha256:deadbeef1234',
+  pullString: 'ghcr.io/sysdiglabs/sample-app:latest',
+  policyEvaluationResult: 'failed',
+  createdAt: new Date('2024-01-22T08:51:46Z'),
+  vulnTotalBySeverity: { critical: 1, high: 3, medium: 7, low: 2, negligible: 0 },
+};
+
 const mockSysdigApi = {
   fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [] }),
   fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [] }),
@@ -91,5 +100,49 @@ describe('SysdigVMPipelineFetchComponent', () => {
     // Wait for the missing annotation message to render
     const message = await screen.findByText(/missing annotation/i);
     expect(message).toBeInTheDocument();
+  });
+
+  it('renders rows using v1 policyEvaluationResult field (without s)', async () => {
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnPipeline: jest.fn().mockResolvedValue({ data: [mockPipelineScanV1] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMPipelineFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    expect(await screen.findByText('ghcr.io/sysdiglabs/sample-app:latest')).toBeInTheDocument();
+    expect(screen.getByText('failed')).toBeInTheDocument();
+  });
+
+  it('filters out rows with null policyEvaluationResult', async () => {
+    const scanWithNullPolicy = { ...mockPipelineScanV1, policyEvaluationResult: null as any };
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnPipeline: jest.fn().mockResolvedValue({ data: [scanWithNullPolicy, mockPipelineScanV1] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMPipelineFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    // Only the scan with a non-null policyEvaluationResult should appear
+    const rows = await screen.findAllByText('ghcr.io/sysdiglabs/sample-app:latest');
+    expect(rows).toHaveLength(1);
   });
 });

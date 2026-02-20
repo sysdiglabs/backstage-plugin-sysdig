@@ -34,7 +34,7 @@ import {
 import { sysdigApiRef } from '../../api';
 
 type RegistryScan =   {
-  mainAssetName: string,
+  pullString: string,
   imageId: string,
   resultId: string,
   vulnTotalBySeverity: {
@@ -57,7 +57,7 @@ type DenseTableProps = {
   {
     "createdAt": "2019-08-24T14:15:22Z",
     "imageId": "string",
-    "mainAssetName": "string",
+    "pullString": "string",
     "resultId": "string",
     "vulnTotalBySeverity": {
       "critical": 0,
@@ -81,7 +81,7 @@ export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
     .flatMap(scan => {
     return {
       imageId: <code>{scan.imageId}</code>,
-      asset: scan.mainAssetName,
+      asset: scan.pullString,
       severity: getChips(scan.vulnTotalBySeverity)
     };
   });

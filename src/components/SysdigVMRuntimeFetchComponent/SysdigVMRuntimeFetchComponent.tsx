@@ -42,7 +42,8 @@ import { sysdigApiRef } from '../../api';
 type RuntimeScan =   {
   isRiskSpotlightEnabled: boolean,
   mainAssetName: string,
-  policyEvaluationsResult: string,
+  policyEvaluationResult: string,
+  resourceId: string,
   resultId: string,
   runningVulnTotalBySeverity: {
     critical: number,
@@ -120,10 +121,10 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 //    { title: 'URL', field: "url", width: "10%"  },
   ];
 
-  const data = runtimeScans.filter(scan => { return scan.policyEvaluationsResult !== null && scan.policyEvaluationsResult !== '' })
+  const data = runtimeScans.filter(scan => { return scan.policyEvaluationResult !== null && scan.policyEvaluationResult !== '' })
     .flatMap(scan => {
     return {
-      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationsResult),
+      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationResult),
       asset: scan.mainAssetName,
 //      scope: JSON.stringify(scan.scope),
       severity: getChips(scan.vulnTotalBySeverity),

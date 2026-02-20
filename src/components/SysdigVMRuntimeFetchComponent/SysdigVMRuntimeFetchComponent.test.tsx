@@ -42,6 +42,25 @@ const mockEntityWithoutAnnotations = {
   },
 };
 
+const mockRuntimeScanV1 = {
+  resultId: 'result-abc123',
+  resourceId: 'sha256:a1b2c3d4e5f6',
+  mainAssetName: 'nginx:latest',
+  policyEvaluationResult: 'failed',
+  isRiskSpotlightEnabled: true,
+  sbomId: 'sbom-xyz',
+  scope: {
+    'asset.type': 'workload',
+    'kubernetes.cluster.name': 'test-cluster',
+    'kubernetes.namespace.name': 'test-namespace',
+    'kubernetes.workload.name': 'nginx',
+    'kubernetes.workload.type': 'deployment',
+    'kubernetes.pod.container.name': 'nginx',
+  },
+  vulnTotalBySeverity: { critical: 2, high: 5, medium: 10, low: 3, negligible: 1 },
+  runningVulnTotalBySeverity: { critical: 1, high: 2, medium: 4, low: 1, negligible: 0 },
+};
+
 const mockSysdigApi = {
   fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [] }),
   fetchVulnRegistry: jest.fn().mockResolvedValue({ data: [] }),
@@ -92,5 +111,49 @@ describe('SysdigVMRuntimeFetchComponent', () => {
     // Wait for the missing annotation message to render
     const message = await screen.findByText(/missing annotation/i);
     expect(message).toBeInTheDocument();
+  });
+
+  it('renders rows using v1 policyEvaluationResult field (without s)', async () => {
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [mockRuntimeScanV1] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRuntimeFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    expect(await screen.findByText('nginx:latest')).toBeInTheDocument();
+    expect(screen.getByText('failed')).toBeInTheDocument();
+  });
+
+  it('filters out rows with null policyEvaluationResult', async () => {
+    const scanWithNullPolicy = { ...mockRuntimeScanV1, policyEvaluationResult: null as any };
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [scanWithNullPolicy, mockRuntimeScanV1] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRuntimeFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    // Only the scan with a non-null policyEvaluationResult should appear (1 row = 1 asset name)
+    const rows = await screen.findAllByText('nginx:latest');
+    expect(rows).toHaveLength(1);
   });
 });

@@ -35,8 +35,8 @@ import { sysdigApiRef } from '../../api';
 type PipelineScan = {
   createdAt: Date,
   imageId: string,
-  mainAssetName: string,
-  policyEvaluationsResult: string,
+  pullString: string,
+  policyEvaluationResult: string,
   resultId: string,
   vulnTotalBySeverity: {
     critical: number,
@@ -58,8 +58,8 @@ type DenseTableProps = {
   {
     "createdAt": "2019-08-24T14:15:22Z",
     "imageId": "string",
-    "mainAssetName": "string",
-    "policyEvaluationsResult": "passed",
+    "pullString": "string",
+    "policyEvaluationResult": "passed",
     "resultId": "string",
     "vulnTotalBySeverity": {
       "critical": 0,
@@ -82,12 +82,12 @@ export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 //    { title: 'URL', field: "url", width: "10%"  },
   ];
 
-  const data = pipelineScans.filter(scan => { return scan.policyEvaluationsResult !== null && scan.policyEvaluationsResult !== '' })
+  const data = pipelineScans.filter(scan => { return scan.policyEvaluationResult !== null && scan.policyEvaluationResult !== '' })
     .flatMap(scan => {
     return {
-      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationsResult),
+      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationResult),
       imageId: <code>{scan.imageId}</code>,
-      asset: scan.mainAssetName,
+      asset: scan.pullString,
       vulns: getChips(scan.vulnTotalBySeverity),
       // convert image.lastEvaluatedAt to a date string
 //      lastEvaluatedAt: getDate(image.lastEvaluatedAt * 1000),

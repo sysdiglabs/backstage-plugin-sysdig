@@ -8,13 +8,13 @@ export const API_PROXY_BASE_PATH = "/api/proxy/sysdig";
  */
 
 // API Endpoint for Vulnerability Management at Runtime
-export const API_VULN_RUNTIME = "/secure/vulnerability/v1beta1/runtime-results";
+export const API_VULN_RUNTIME = "/secure/vulnerability/v1/runtime-results";
 
 // API Endpoint for Vulnerability Management at Registry
-export const API_VULN_REGISTRY = "/secure/vulnerability/v1beta1/registry-results";
+export const API_VULN_REGISTRY = "/secure/vulnerability/v1/registry-results";
 
 // API Endpoint for Vulnerability Management at Pipeline
-export const API_VULN_PIPELINE = "/secure/vulnerability/v1beta1/pipeline-results";
+export const API_VULN_PIPELINE = "/secure/vulnerability/v1/pipeline-results";
 
 // API Endpoint for Inventory (Posture)
 export const API_INVENTORY = "/api/cspm/v1/inventory/resources";
