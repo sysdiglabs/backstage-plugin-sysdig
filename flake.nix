@@ -32,13 +32,12 @@
                 nodejs
                 pre-commit
                 typescript
+                pinact
                 yarn-berry
-                (python3.withPackages (p: with p; [ gyp ]))
-              ]
-              ++ (with nodePackages; [
                 typescript-language-server
                 node-gyp
-              ]);
+                (python3.withPackages (p: with p; [ gyp ]))
+              ];
               shellHook = ''
                 pre-commit install
               '';

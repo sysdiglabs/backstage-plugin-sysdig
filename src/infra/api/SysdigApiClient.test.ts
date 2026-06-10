@@ -1,7 +1,7 @@
 import { setupRequestMockHandlers, TestApiProvider } from "@backstage/test-utils";
 import { ConfigReader } from "@backstage/config";
 import { ConfigApi, FetchApi } from "@backstage/core-plugin-api";
-import { rest } from "msw";
+import { http, HttpResponse } from "msw";
 import { setupServer } from "msw/node";
 import { SysdigApiClient } from "./SysdigApiClient";
 import { API_PROXY_BASE_PATH, API_VULN_RUNTIME } from "../../lib";
@@ -23,13 +23,14 @@ describe("SysdigApiClient", () => {
   beforeEach(() => {
     jest.clearAllMocks();
     server.use(
-      rest.get(
+      http.get(
         `http://localhost:7007${API_PROXY_BASE_PATH}${API_VULN_RUNTIME}`,
-        (req, res, ctx) => {
-          if (req.url.searchParams.get("filters") === "test-filter") {
-            return res(ctx.json({ data: [{ id: "1", name: "test-runtime-vuln" }] }));
+        ({ request }) => {
+          const url = new URL(request.url);
+          if (url.searchParams.get("filters") === "test-filter") {
+            return HttpResponse.json({ data: [{ id: "1", name: "test-runtime-vuln" }] });
           }
-          return res(ctx.json({ data: [] }));
+          return HttpResponse.json({ data: [] });
         },
       ),
     );

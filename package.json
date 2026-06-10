@@ -28,9 +28,9 @@
     "@testing-library/react": "^16.0.0"
   },
   "dependencies": {
-    "@backstage/core-components": "^0.18.3",
-    "@backstage/core-plugin-api": "^1.12.0",
-    "@backstage/plugin-catalog-react": "^1.21.3",
+    "@backstage/core-components": "^0.18.10",
+    "@backstage/core-plugin-api": "^1.12.6",
+    "@backstage/plugin-catalog-react": "^3.0.0",
     "@mui/icons-material": "^5.16.0",
     "@mui/material": "^5.16.0",
     "react-use": "^17.2.4"
@@ -40,19 +40,21 @@
     "react-dom": "^16.13.1 || ^17.0.0 || ^18.0.0"
   },
   "devDependencies": {
-    "@backstage/cli": "^0.34.5",
-    "@backstage/config": "^1.3.6",
-    "@backstage/dev-utils": "^1.1.17",
-    "@backstage/eslint-plugin": "^0.2.0",
-    "@backstage/test-utils": "^1.7.13",
+    "@backstage/cli": "^0.36.2",
+    "@backstage/config": "^1.3.8",
+    "@backstage/dev-utils": "^1.1.23",
+    "@backstage/eslint-plugin": "^0.3.0",
+    "@backstage/test-utils": "^1.7.18",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
+    "@jest/environment-jsdom-abstract": "^30.0.0",
     "@spotify/eslint-config-base": "^15.0.0",
     "@spotify/eslint-config-react": "^15.0.0",
     "@spotify/eslint-config-typescript": "^15.0.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.0",
+    "@types/jest": "^30.0.0",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "8.48.1",
@@ -67,7 +69,9 @@
     "eslint-plugin-unused-imports": "^2.0.0",
     "express": "^5.2.1",
     "http-proxy-middleware": "^3.0.5",
-    "msw": "^1.0.0",
+    "jest": "^30.0.0",
+    "jsdom": "^27.1.0",
+    "msw": "^2.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
@@ -81,7 +85,7 @@
   "module": "./dist/index.esm.js",
   "jest": {
     "transformIgnorePatterns": [
-      "node_modules/(?!react-use|@backstage|react-syntax-highlighter|style-loader|css-loader|d3-.*|react-markdown|vfile|vfile-message|unist-.*|unified|bail|is-plain-obj|trough|remark-.*|mdast-.*|micromark.*|decode-named-character-reference|character-entities|property-information|hast-.*|space-separated-tokens|comma-separated-tokens|web-namespaces|zwitch|html-void-elements|ccount|escape-string-regexp|trim-lines|remark-rehype|unist-util-.*|markdown-table|@react-hookz/web|yaml)"
+      "node_modules/(?!react-use|@backstage|react-syntax-highlighter|style-loader|css-loader|d3-.*|react-markdown|vfile|vfile-message|unist-.*|unified|bail|is-plain-obj|trough|remark-.*|mdast-.*|micromark.*|decode-named-character-reference|character-entities|property-information|hast-.*|space-separated-tokens|comma-separated-tokens|web-namespaces|zwitch|html-void-elements|ccount|escape-string-regexp|trim-lines|remark-rehype|rehype-.*|hastscript|unist-util-.*|markdown-table|@react-hookz/web|yaml|msw|@mswjs/.*|@open-draft/.*|rettime|until-async|@bundled-es-modules/.*|strict-event-emitter|headers-polyfill|outvariant|is-node-process)"
     ]
   }
 }
