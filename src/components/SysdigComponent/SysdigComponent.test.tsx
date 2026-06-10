@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { SysdigComponent } from './SysdigComponent';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 import { screen } from '@testing-library/react';
 import {
@@ -61,7 +61,7 @@ describe('SysdigComponent', () => {
   // setup mock response
   beforeEach(() => {
     server.use(
-      rest.get('/*', (_, res, ctx) => res(ctx.status(200), ctx.json({}))),
+      http.get('*', () => HttpResponse.json({})),
     );
   });
 

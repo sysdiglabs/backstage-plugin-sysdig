@@ -30,9 +30,10 @@ clean: install
     yarn clean
 
 # Bumps dependencies
-bump:
+update:
     nix flake update
     nix develop --command yarn backstage-cli versions:bump
+    nix develop --command pinact run -u
     nix develop --command pre-commit autoupdate
 
 # Checks for unused dependencies
