@@ -36,13 +36,15 @@ app.use('/api/proxy/sysdig', createProxyMiddleware({
     "Accept": "application/json",
     "X-Sysdig-Product": "SDS"
   },
-  onProxyRes: (proxyRes, req, _res) => {
-     console.log(`[Proxy] ${req.method} ${req.path} -> ${target} [${proxyRes.statusCode}]`);
+  on: {
+    proxyRes: (proxyRes, req, _res) => {
+      console.log(`[Proxy] ${req.method} ${req.path} -> ${target} [${proxyRes.statusCode}]`);
+    },
+    error: (err, req, res) => {
+      console.error(`[Proxy Error] ${err.message}`);
+      res.status(500).send('Proxy Error');
+    },
   },
-  onError: (err, req, res) => {
-    console.error(`[Proxy Error] ${err.message}`);
-    res.status(500).send('Proxy Error');
-  }
 }));
 
 app.listen(PORT, () => {

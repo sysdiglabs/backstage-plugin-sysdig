@@ -140,7 +140,7 @@ function getTitleWithBacklink(title: string, backlink: string) {
   return (
     <div style={{display:"flex"}}>
       <a href={backlink} target="_blank" rel="noopener noreferrer">{title}</a>
-      <div style={{marginLeft:"10px;", "padding":"0 0 10px 5px"}}>
+      <div style={{marginLeft:"10px", "padding":"0 0 10px 5px"}}>
       <Tooltip title="Open in Sysdig Secure">
         <IconButton aria-label='Open in new tab' size='small' target="_blank" href={backlink}>
           <OpenInNew fontSize="inherit" />
