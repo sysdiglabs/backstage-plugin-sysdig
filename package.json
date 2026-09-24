@@ -1,6 +1,6 @@
 {
   "name": "@sysdig/backstage-plugin-sysdig",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "main": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "license": "Apache-2.0",
@@ -10,7 +10,11 @@
     "types": "dist/index.d.ts"
   },
   "backstage": {
-    "role": "frontend-plugin"
+    "role": "frontend-plugin",
+    "pluginId": "sysdig",
+    "pluginPackages": [
+      "@sysdig/backstage-plugin-sysdig"
+    ]
   },
   "sideEffects": false,
   "scripts": {
@@ -79,14 +83,21 @@
     "typescript": "^5.6.2"
   },
   "files": [
-    "config.d.ts",
+    "config.schema.json",
     "dist"
   ],
-  "configSchema": "config.d.ts",
+  "configSchema": "config.schema.json",
   "module": "./dist/index.esm.js",
   "jest": {
     "transformIgnorePatterns": [
       "node_modules/(?!react-use|@backstage|react-syntax-highlighter|style-loader|css-loader|d3-.*|react-markdown|vfile|vfile-message|unist-.*|unified|bail|is-plain-obj|trough|remark-.*|mdast-.*|micromark.*|decode-named-character-reference|character-entities|property-information|hast-.*|space-separated-tokens|comma-separated-tokens|web-namespaces|zwitch|html-void-elements|ccount|escape-string-regexp|trim-lines|remark-rehype|rehype-.*|hastscript|unist-util-.*|markdown-table|@react-hookz/web|yaml|msw|@mswjs/.*|@open-draft/.*|rettime|until-async|@bundled-es-modules/.*|strict-event-emitter|headers-polyfill|outvariant|is-node-process)"
     ]
+  },
+  "typesVersions": {
+    "*": {
+      "package.json": [
+        "package.json"
+      ]
+    }
   }
 }
