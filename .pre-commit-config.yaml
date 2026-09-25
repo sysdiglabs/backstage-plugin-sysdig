@@ -19,3 +19,9 @@ repos:
         entry: just test
         language: system
         pass_filenames: false
+      - id: audit
+        name: audit dependencies
+        entry: just audit
+        language: system
+        files: ^(package\.json|yarn\.lock)$
+        pass_filenames: false
