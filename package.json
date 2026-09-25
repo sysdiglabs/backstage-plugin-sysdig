@@ -1,9 +1,13 @@
 {
   "name": "@sysdig/backstage-plugin-sysdig",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "main": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sysdiglabs/backstage-plugin-sysdig"
+  },
   "publishConfig": {
     "access": "public",
     "main": "dist/index.esm.js",
