@@ -42,4 +42,4 @@ check-unused:
 
 # Checks for vulnerabilities
 audit: install
-    yarn npm audit
+    yarn npm audit --all --recursive --severity high
