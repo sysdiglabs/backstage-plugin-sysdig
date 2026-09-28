@@ -1,6 +1,6 @@
 {
   "name": "@sysdig/backstage-plugin-sysdig",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "main": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "license": "Apache-2.0",
@@ -89,10 +89,10 @@
     "typescript": "^5.6.2"
   },
   "files": [
-    "config.schema.json",
+    "config.d.ts",
     "dist"
   ],
-  "configSchema": "config.schema.json",
+  "configSchema": "config.d.ts",
   "module": "./dist/index.esm.js",
   "jest": {
     "transformIgnorePatterns": [
