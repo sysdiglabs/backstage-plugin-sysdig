@@ -30,16 +30,22 @@ import {
   SYSDIG_CUSTOM_FILTER_ANNOTATION,
 
   // methods
-  getStatusColorSpan,
+  getPolicyEvaluation,
+  getLifecycle,
+  getException,
   getChips,
+  IN_USE_SEVERITIES,
+  compareSeverities,
   getDetails,
   getTitleWithBacklink,
+  getHeaderWithTooltip,
   getBacklink
 } from '../../lib'
 import { sysdigApiRef } from '../../api';
 
 
 type RuntimeScan =   {
+  endOfLifeDate?: string,
   isRiskSpotlightEnabled: boolean,
   mainAssetName: string,
   policyEvaluationResult: string,
@@ -55,11 +61,13 @@ type RuntimeScan =   {
   sbomId: string,
   scope: {
     "asset.type": string,
-    "kubernetes.cluster.name": string,
-    "kubernetes.namespace.name": string,
-    "kubernetes.pod.container.name": string,
-    "kubernetes.workload.name": string,
-    "kubernetes.workload.type": string
+    "kubernetes.cluster.name"?: string,
+    "kubernetes.namespace.name"?: string,
+    "kubernetes.pod.container.name"?: string,
+    "kubernetes.workload.name"?: string,
+    "kubernetes.workload.type"?: string,
+    "agent.tag.cluster"?: string,
+    "cloudProvider.region"?: string
   },
   vulnTotalBySeverity: {
     critical: number,
@@ -110,25 +118,39 @@ type DenseTableProps = {
   ...
 */
 
-export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
-  const columns: TableColumn[] = [
-    { title: 'Status', field: 'policyEvalStatus', width: "2%" },
-    { title: 'Asset Name', field: 'asset', width: "18%"  },
-    { title: 'Severity', field: 'severity', width: "35%"  },
-    { title: 'In Use', field: 'inUse', width: "35%"  },
-    { title: 'Details', field: 'details', width: "10%"  },
+// Same image can run in several clusters/namespaces, each with its own in-use vulns
+const getLocation = (scope: RuntimeScan['scope'] | undefined) => ({
+  cluster: scope?.["kubernetes.cluster.name"] ?? scope?.["agent.tag.cluster"] ?? scope?.["cloudProvider.region"] ?? '-',
+  namespace: scope?.["kubernetes.namespace.name"] ?? '-',
+});
+
+// defined once: material-table resets its sort state when column definitions change between renders.
+// no defaultSort: in material-table 3.x it breaks the sort cycle of other columns, data is pre-sorted instead
+const columns: TableColumn[] = [
+  { title: 'Asset Name', field: 'asset', width: "23%" },
+  { title: 'Cluster', field: 'cluster', width: "12%"  },
+  { title: 'Namespace', field: 'namespace', width: "12%"  },
+  { title: getHeaderWithTooltip('In Use', 'Only vulnerabilities in packages loaded in memory at runtime.'), field: 'inUse', width: "14%", render: (row: any) => getChips(row.inUse, IN_USE_SEVERITIES), customSort: (a: any, b: any) => compareSeverities(a.inUse, b.inUse) },
+  { title: getHeaderWithTooltip('Vulnerabilities', 'All vulnerabilities found in the image.'), field: 'severity', width: "14%", render: (row: any) => getChips(row.severity), customSort: (a: any, b: any) => compareSeverities(a.severity, b.severity) },
+  { title: getHeaderWithTooltip('Policy Evaluation', 'Result of the vulnerability policy evaluation. Failed = at least one policy rule was violated.'), field: 'policyEvalStatus', width: "9%", render: (row: any) => getPolicyEvaluation(row.policyEvalStatus) },
+  { title: getHeaderWithTooltip('Component Lifecycle', 'Active = still supported. EOL = the image base OS or runtime is past its end-of-life date and no longer receives security fixes.'), field: 'endOfLifeDate', width: "7%", render: (row: any) => getLifecycle(row.endOfLifeDate), customSort: (a: any, b: any) => (a.endOfLifeDate ?? '9999').localeCompare(b.endOfLifeDate ?? '9999') },
+  { title: 'Exceptions', field: 'exception', width: "5%", render: (row: any) => getException(row.policyEvalStatus), customSort: (a: any, b: any) => Number(a.policyEvalStatus === 'accepted') - Number(b.policyEvalStatus === 'accepted') },
+  { title: 'Details', field: 'details', width: "4%", sorting: false },
 //    { title: 'Last Evaluated At', field: 'lastEvaluatedAt', width: "15%" },
 //    { title: 'URL', field: "url", width: "10%"  },
-  ];
+];
+
+export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
 
   const data = runtimeScans.filter(scan => { return scan.policyEvaluationResult !== null && scan.policyEvaluationResult !== '' })
     .flatMap(scan => {
     return {
-      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationResult),
+      policyEvalStatus: scan.policyEvaluationResult,
+      endOfLifeDate: scan.endOfLifeDate,
       asset: scan.mainAssetName,
-//      scope: JSON.stringify(scan.scope),
-      severity: getChips(scan.vulnTotalBySeverity),
-      inUse: getChips(scan.runningVulnTotalBySeverity),
+      ...getLocation(scan.scope),
+      severity: scan.vulnTotalBySeverity,
+      inUse: scan.runningVulnTotalBySeverity,
       details: getDetails(scan)
       // convert image.lastEvaluatedAt to a date string
 //      lastEvaluatedAt: getDate(image.lastEvaluatedAt * 1000),
@@ -136,7 +158,9 @@ export const DenseTable = ({ runtimeScans, title }: DenseTableProps) => {
       // url: getUrl('https://prodmon.app.sysdig.com/api/scanning/v1/images/by_id/' + image.imageId + '?fulltag=' + image.repo + ':' + image.tag),
 //      url: getUrl('https://prodmon.app.sysdig.com/secure/#/scanning/scan-results/' + urlEncode(image.repo + ':' + image.tag) +' /id/' + image.imageId + '/summaries'),
     };
-  });
+  })
+  // same initial order as Sysdig Secure: most in-use vulnerabilities first
+    .sort((a, b) => compareSeverities(b.inUse, a.inUse));
 
   return (
     <Table

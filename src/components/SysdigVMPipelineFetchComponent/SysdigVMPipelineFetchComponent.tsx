@@ -25,9 +25,10 @@ import {
   SYSDIG_IMAGE_FREETEXT_ANNOTATION,
 
   // methods
-  getStatusColorSpan,
+  getPolicyEvaluation,
   getTitleWithBacklink,
   getChips,
+  compareSeverities,
   getBacklink
 } from '../../lib'
 import { sysdigApiRef } from '../../api';
@@ -72,23 +73,25 @@ type DenseTableProps = {
   ...
 */
 
-export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
-  const columns: TableColumn[] = [
-    { title: 'Status', field: 'policyEvalStatus', width: "2%" },
-    { title: 'Image ID', field: 'imageId', width: "23%" },
-    { title: 'Asset Name', field: 'asset', width: "35%"  },
-    { title: 'Vulnerabilities', field: 'vulns', width: "35%"  },
+// defined once: material-table resets its sort state when column definitions change between renders
+const columns: TableColumn[] = [
+  { title: 'Asset Name', field: 'asset', width: "40%"  },
+  { title: 'Image ID', field: 'imageId', width: "25%" },
+  { title: 'Vulnerabilities', field: 'vulns', width: "25%", render: (row: any) => getChips(row.vulns), customSort: (a: any, b: any) => compareSeverities(a.vulns, b.vulns) },
+  { title: 'Policy Evaluation', field: 'policyEvalStatus', width: "10%", render: (row: any) => getPolicyEvaluation(row.policyEvalStatus) },
 //    { title: 'Last Evaluated At', field: 'lastEvaluatedAt', width: "15%" },
 //    { title: 'URL', field: "url", width: "10%"  },
-  ];
+];
+
+export const DenseTable = ({ pipelineScans, title }: DenseTableProps) => {
 
   const data = pipelineScans.filter(scan => { return scan.policyEvaluationResult !== null && scan.policyEvaluationResult !== '' })
     .flatMap(scan => {
     return {
-      policyEvalStatus: getStatusColorSpan(scan.policyEvaluationResult),
+      policyEvalStatus: scan.policyEvaluationResult,
       imageId: <code>{scan.imageId}</code>,
       asset: scan.pullString,
-      vulns: getChips(scan.vulnTotalBySeverity),
+      vulns: scan.vulnTotalBySeverity,
       // convert image.lastEvaluatedAt to a date string
 //      lastEvaluatedAt: getDate(image.lastEvaluatedAt * 1000),
       // https://prodmon.app.sysdig.com/secure/#/scanning/scan-results/quay.io%2Fsysdig%2Fsysdigcloud-backend%3A5.1.0.10598-sysdig-meerkat-collector/id/497c07ec287acc1800dc84a91ac1260e910c603cabc8febd754b909f406a6e26/summaries

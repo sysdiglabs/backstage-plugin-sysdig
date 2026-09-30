@@ -35,7 +35,12 @@ export {
 
 export {
     getStatusColorSpan,
+    getPolicyEvaluation,
+    getLifecycle,
+    getException,
     getChips,
+    IN_USE_SEVERITIES,
+    compareSeverities,
     getDetails,
     getDate,
     getUrl,
@@ -45,6 +50,7 @@ export {
     getPassed,
     getResourceName,
     getTitleWithBacklink,
+    getHeaderWithTooltip,
     urlEncode
 } from './ui'
 

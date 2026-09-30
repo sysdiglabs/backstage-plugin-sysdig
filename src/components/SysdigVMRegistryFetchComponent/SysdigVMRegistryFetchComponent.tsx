@@ -28,6 +28,7 @@ import {
 
   // methods
   getChips,
+  compareSeverities,
   getTitleWithBacklink,
   getBacklink
 } from '../../lib';
@@ -70,19 +71,21 @@ type DenseTableProps = {
   ...
 */
 
+// defined once: material-table resets its sort state when column definitions change between renders
+const columns: TableColumn[] = [
+  { title: 'Asset Name', field: 'asset', width: "45%"  },
+  { title: 'Image ID', field: 'imageId', width: "25%" },
+  { title: 'Vulnerabilities', field: 'severity', width: "30%", render: (row: any) => getChips(row.severity), customSort: (a: any, b: any) => compareSeverities(a.severity, b.severity) },
+];
+
 export const DenseTable = ({ registryScans, title }: DenseTableProps) => {
-  const columns: TableColumn[] = [
-    { title: 'Image ID', field: 'imageId', width: "20%" },
-    { title: 'Asset Name', field: 'asset', width: "35%"  },
-    { title: 'Severity', field: 'severity', width: "30%"  },
-  ];
 
   const data = registryScans.filter(scan => { return scan.imageId !== '' })
     .flatMap(scan => {
     return {
       imageId: <code>{scan.imageId}</code>,
       asset: scan.pullString,
-      severity: getChips(scan.vulnTotalBySeverity)
+      severity: scan.vulnTotalBySeverity
     };
   });
 
