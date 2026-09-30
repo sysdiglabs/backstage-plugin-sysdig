@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { screen } from '@testing-library/react';
+import { screen, fireEvent, within } from '@testing-library/react';
 import { SysdigVMRuntimeFetchComponent } from './SysdigVMRuntimeFetchComponent';
 import { EntityProvider } from '@backstage/plugin-catalog-react';
 import { renderInTestApp, TestApiProvider } from '@backstage/test-utils';
@@ -131,7 +131,61 @@ describe('SysdigVMRuntimeFetchComponent', () => {
     );
 
     expect(await screen.findByText('nginx:latest')).toBeInTheDocument();
-    expect(screen.getByText('failed')).toBeInTheDocument();
+    expect(screen.getByText('Failed')).toBeInTheDocument();
+    expect(screen.getByText('test-cluster')).toBeInTheDocument();
+    expect(screen.getByText('test-namespace')).toBeInTheDocument();
+
+    fireEvent.mouseOver(screen.getByText('Policy Evaluation'));
+    expect(await screen.findByText(/Failed = at least one policy rule was violated/)).toBeInTheDocument();
+  });
+
+  it('shows accepted results as passed with an exception, and past EOL dates', async () => {
+    const acceptedScan = { ...mockRuntimeScanV1, policyEvaluationResult: 'accepted', endOfLifeDate: '2018-05-01T00:00:00Z' };
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [acceptedScan] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRuntimeFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    expect(await screen.findByText('Passed')).toBeInTheDocument();
+    expect(screen.getByText('EOL')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Risk accepted/)).toBeInTheDocument();
+  });
+
+  it('falls back to region when scope has no kubernetes cluster', async () => {
+    const hostScan = {
+      ...mockRuntimeScanV1,
+      scope: { 'asset.type': 'host', 'cloudProvider.region': 'phx' },
+    };
+    const apiWithData = {
+      ...mockSysdigApi,
+      fetchVulnRuntime: jest.fn().mockResolvedValue({ data: [hostScan] }),
+    };
+
+    await renderInTestApp(
+      <TestApiProvider apis={[
+        [sysdigApiRef, apiWithData],
+        [configApiRef, mockConfig],
+      ]}>
+        <EntityProvider entity={mockEntity}>
+          <SysdigVMRuntimeFetchComponent />
+        </EntityProvider>
+      </TestApiProvider>
+    );
+
+    const row = (await screen.findByText('phx')).closest('tr')!;
+    // columns: Asset Name, Cluster, Namespace, ...
+    expect(within(row).getAllByRole('cell')[2]).toHaveTextContent(/^-$/);
   });
 
   it('filters out rows with null policyEvaluationResult', async () => {

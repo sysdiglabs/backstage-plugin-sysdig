@@ -120,7 +120,7 @@ describe('SysdigVMPipelineFetchComponent', () => {
     );
 
     expect(await screen.findByText('ghcr.io/sysdiglabs/sample-app:latest')).toBeInTheDocument();
-    expect(screen.getByText('failed')).toBeInTheDocument();
+    expect(screen.getByText('Failed')).toBeInTheDocument();
   });
 
   it('filters out rows with null policyEvaluationResult', async () => {
